@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="App">
+      <UniqueIdentifier>{fa73ddc0-5a3a-4315-aa77-71cecd5a1280}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{d393945e-abf2-4a45-be34-5fbb714bb88d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utility">
+      <UniqueIdentifier>{1877196b-eb99-4c0d-822f-b74727d2ab8c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.hpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\glad\src\glad.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HighwindWindow.hpp">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="libs.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.hpp">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsEngine.hpp">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="FragmentShader.hpp">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="HWUtil.hpp">
+      <Filter>Engine\Utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
