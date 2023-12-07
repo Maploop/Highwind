@@ -148,7 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\libraries\glad\src\glad.c" />
-    <ClCompile Include="main.hpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FragmentShader.hpp" />
@@ -156,6 +156,8 @@
     <ClInclude Include="HWUtil.hpp" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="HighwindWindow.hpp" />
+    <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="VertexShader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

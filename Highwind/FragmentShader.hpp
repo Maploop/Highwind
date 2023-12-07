@@ -5,6 +5,7 @@
 class FragmentShader
 {
 public:
+	FragmentShader() {}
 	FragmentShader( const char* source ) : m_Source( source ) {}
 	~FragmentShader() {}
 

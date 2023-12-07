@@ -5,6 +5,7 @@
 class VertexShader
 {
 public:
+	VertexShader() {}
 	VertexShader( const char* source ) : m_Source( source ) {}
 	~VertexShader() {}
 

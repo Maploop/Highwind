@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <filesystem>
@@ -13,3 +14,5 @@
 #include "VertexShader.hpp"
 #include "FragmentShader.hpp"
 #include "GraphicsEngine.hpp"
+#include "Shader.hpp"
+#include "stb_image.h"

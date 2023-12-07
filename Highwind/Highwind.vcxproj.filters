@@ -10,9 +10,15 @@
     <Filter Include="Engine\Utility">
       <UniqueIdentifier>{1877196b-eb99-4c0d-822f-b74727d2ab8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Shader">
+      <UniqueIdentifier>{ff600edb-dad6-4837-8a9a-443fddd6aabb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Texture">
+      <UniqueIdentifier>{d05dfd07-dae0-4d30-b86e-297635019baa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.hpp">
+    <ClCompile Include="main.cpp">
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="..\libraries\glad\src\glad.c" />
@@ -24,17 +30,23 @@
     <ClInclude Include="libs.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="VertexShader.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine.hpp">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="FragmentShader.hpp">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="HWUtil.hpp">
       <Filter>Engine\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="FragmentShader.hpp">
+      <Filter>Engine\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.hpp">
+      <Filter>Engine\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.hpp">
+      <Filter>Engine\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Engine\Texture</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
