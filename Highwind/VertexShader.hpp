@@ -27,6 +27,7 @@ public:
 			glGetShaderInfoLog( m_VS, 512, NULL, infolog );
 			std::cout << "Error While creating Vertex Shader : " << infolog << std::endl;
 		}
+		std::cout << "Shader: " << m_VS << std::endl;
 	}
 
 	unsigned int GetShaderID()

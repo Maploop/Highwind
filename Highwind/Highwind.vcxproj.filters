@@ -48,5 +48,6 @@
     <ClInclude Include="stb_image.h">
       <Filter>Engine\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.hpp" />
   </ItemGroup>
 </Project>

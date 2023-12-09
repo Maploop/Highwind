@@ -8,13 +8,18 @@ void framebuffer_size_callback( GLFWwindow* window, int width, int height )
 {
     glViewport( 0, 0, width, height );
 }
+void LocalProcInput(GLFWwindow* window);
+
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
 
 int main()
 {
-    HighwindWindow win = HighwindWindow(800, 600, "Highwind 1.0");
+    HighwindWindow win = HighwindWindow(SCR_WIDTH, SCR_HEIGHT, "Highwind 1.0");
     win.Initialize();
     win.SetFramebufferSizeCallback( framebuffer_size_callback );
     GLFWwindow* window = win.GetGLWindow();
+    glEnable( GL_DEPTH_TEST );
 
     const char* vertexShaderSource = "VertexShader.vs";
     const char* fragmentShaderSource = "FragmentShader.fs";
@@ -22,63 +27,102 @@ int main()
     
 
     GraphicsEngine engine = GraphicsEngine( &win );
+    engine.Initialize();
     engine.SetShader( sh );
     engine.GenerateShaders();
 
 
     float vertices[] = {
-        // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
+    // world space positions of our cubes
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f ),
+        glm::vec3( 2.0f,  5.0f, -15.0f ),
+        glm::vec3( -1.5f, -2.2f, -2.5f ),
+        glm::vec3( -3.8f, -2.0f, -12.3f ),
+        glm::vec3( 2.4f, -0.4f, -3.5f ),
+        glm::vec3( -1.7f,  3.0f, -7.5f ),
+        glm::vec3( 1.3f, -2.0f, -2.5f ),
+        glm::vec3( 1.5f,  2.0f, -2.5f ),
+        glm::vec3( 1.5f,  0.2f, -1.5f ),
+        glm::vec3( -1.3f,  1.0f, -1.5f )
     };
+    unsigned int VBO, VAO, EBO;
+    glGenVertexArrays( 1, &VAO );
+    glGenBuffers( 1, &VBO );
 
-    float texCoords[] = {
-    0.0f, 0.0f,  // lower-left corner  
-    1.0f, 0.0f,  // lower-right corner
-    0.5f, 1.0f   // top-center corner
-    };
+    glBindVertexArray( VAO );
 
-    unsigned int m_VBO;
-    unsigned int m_VAO;
-    unsigned int m_EBO;
-
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-    glGenBuffers( 1, &m_VBO );
-    glGenVertexArrays( 1, &m_VAO );
-    glGenBuffers( 1, &m_EBO );
-
-    glBindVertexArray( m_VAO );
-
-    glBindBuffer( GL_ARRAY_BUFFER, m_VAO );
+    glBindBuffer( GL_ARRAY_BUFFER, VBO );
     glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
 
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_EBO );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( indices ), indices, GL_STATIC_DRAW );
-
     // position attribute
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ), (void*)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), (void*)0 );
     glEnableVertexAttribArray( 0 );
-    // color attribute
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof( float ), (void*)(3 * sizeof( float )) );
+    // texture coord attribute
+    glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), (void*)(3 * sizeof( float )) );
     glEnableVertexAttribArray( 1 );
 
-    unsigned int texture;
-    glGenTextures( 1, &texture );
-    glBindTexture( GL_TEXTURE_2D, texture );
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+
+    // load and create a texture 
+    // -------------------------
+    unsigned int texture1, texture2;
+    // texture 1
+    // ---------
+    glGenTextures( 1, &texture1 );
+    glBindTexture( GL_TEXTURE_2D, texture1 );
+    // set the texture wrapping parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+    // set texture filtering parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    // load and generate the texture
+    // load image, create texture and generate mipmaps
     int width, height, nrChannels;
-    unsigned char* data = stbi_load( "container.jpg", &width, &height, &nrChannels, 0 );
+    stbi_set_flip_vertically_on_load( true ); // tell stb_image.h to flip loaded texture's on the y-axis.
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+    unsigned char* data = stbi_load( "resources/textures/container.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
@@ -89,28 +133,77 @@ int main()
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free( data );
+    // texture 2
+    // ---------
+    glGenTextures( 1, &texture2 );
+    glBindTexture( GL_TEXTURE_2D, texture2 );
+    // set the texture wrapping parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    // set texture filtering parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    // load image, create texture and generate mipmaps
+    data = stbi_load( "resources/textures/awesomeface.png", &width, &height, &nrChannels, 0 );
+    if (data)
+    {
+        // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+        glGenerateMipmap( GL_TEXTURE_2D );
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free( data );
+   
+    // To start using the shader
 
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof( float ), (void*)(6 * sizeof( float )) );
-    glEnableVertexAttribArray( 2 );
-
-    // Depractaed code for now!
-     //engine.SetPolygonMode( GL_FILL );
-     //engine.AttachToRenderer( vertices, indices );
+    engine.Update();
+    engine.GetShader().SetInt( "texture1", 0 );
+    engine.GetShader().SetInt( "texture2", 1);
+    engine.GetShader().SetFloat( "tex2alpha", 1.0f );
 
     while (!win.ShouldClose())
     {
+        LocalProcInput(window);
+
+        glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, texture1 );
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, texture2 );
+
         engine.Update();
 
+        // render boxes
+        glBindVertexArray( VAO );
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            // calculate the model matrix for each object and pass it to shader before drawing
+            glm::mat4 model = glm::mat4( 1.0f );
+            model = glm::translate( model, cubePositions[i] );
+            float angle = 20.0f * i;
+            model = glm::rotate( model, glm::radians( angle ), glm::vec3( 1.0f, 0.3f, 0.5f ) );
+            engine.GetShader().SetMat4( "model", model );
 
-        glBindTexture( GL_TEXTURE_2D, texture );
-        glBindVertexArray( m_VAO );
-        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-        glBindVertexArray( 0 );
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
 
         glfwSwapBuffers( window );
         glfwPollEvents();
     }
+    glDeleteVertexArrays( 1, &VAO );
+    glDeleteBuffers( 1, &VBO );
+    glDeleteBuffers( 1, &EBO );
 
     glfwTerminate();
 	return 0;
+}
+
+void LocalProcInput( GLFWwindow* window )
+{
+
 }

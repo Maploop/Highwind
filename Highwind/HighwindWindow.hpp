@@ -22,6 +22,10 @@ public:
 		glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
 		glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 
+		#ifdef __APPLE__
+			glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
+		#endif
+
 		GLFWwindow* window = glfwCreateWindow( m_Width, m_Height, m_WinTitle, NULL, NULL );
 		if (window == NULL)
 		{
@@ -37,8 +41,6 @@ public:
 			std::cout << "Failed to initialize GLAD" << std::endl;
 			return;
 		}
-
-		glViewport( 0, 0, m_Width, m_Height );
 	}
 
 	bool ShouldClose()
@@ -54,6 +56,11 @@ public:
 	void SetFramebufferSizeCallback( GLFWframebuffersizefun callb )
 	{
 		glfwSetFramebufferSizeCallback( m_Window, callb );
+	}
+
+	void SetShouldClose( bool sc )
+	{
+		glfwSetWindowShouldClose( m_Window, sc );
 	}
 
 private:
