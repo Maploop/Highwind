@@ -23,10 +23,7 @@ public:
 	void Initialize()
 	{
 		m_Camera = Camera( glm::vec3( 0.0f, 0.0f, 0.0f ) );
-
-		// todo fix this shit
-		glfwSetCursorPosCallback( m_Window->GetGLWindow(), mouse_callback);
-		glfwSetScrollCallback( m_Window->GetGLWindow(), scroll_callback );	
+		glfwSetWindowUserPointer(m_Window->GetGLWindow(), this);
 	}
 
 	void GenerateShaders()

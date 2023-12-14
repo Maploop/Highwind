@@ -10,8 +10,8 @@ void framebuffer_size_callback( GLFWwindow* window, int width, int height )
 }
 void LocalProcInput(GLFWwindow* window);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
 
 int main()
 {
@@ -27,7 +27,22 @@ int main()
     
 
     GraphicsEngine engine = GraphicsEngine( &win );
+    glfwSetWindowUserPointer( window, &engine );
     engine.Initialize();
+    glfwSetCursorPosCallback( window, []( GLFWwindow* window, double xpos, double ypos ) {
+        GraphicsEngine* engine = static_cast<GraphicsEngine*>(glfwGetWindowUserPointer( window ));
+        if (engine) {
+            engine->mouse_callback( window, xpos, ypos );
+        }
+        } );
+
+    glfwSetScrollCallback( window, []( GLFWwindow* window, double xoffset, double yoffset ) {
+        GraphicsEngine* engine = static_cast<GraphicsEngine*>(glfwGetWindowUserPointer( window ));
+        if (engine) {
+            engine->scroll_callback( window, xoffset, yoffset );
+        }
+        } );
+
     engine.SetShader( sh );
     engine.GenerateShaders();
 
@@ -162,7 +177,7 @@ int main()
     engine.Update();
     engine.GetShader().SetInt( "texture1", 0 );
     engine.GetShader().SetInt( "texture2", 1);
-    engine.GetShader().SetFloat( "tex2alpha", 1.0f );
+    engine.GetShader().SetFloat( "tex2alpha", 0.0f );
 
     while (!win.ShouldClose())
     {
