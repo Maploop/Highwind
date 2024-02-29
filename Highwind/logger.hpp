@@ -1,13 +1,17 @@
 #pragma once
 
-#include "defines.h";
 #include <stdio.h>
 #include <stdarg.h>
 
-#define LOG_WARN_ENABLED 1
-#define LOG_INFO_ENABLED 1
-#define LOG_DEBUG_ENABLED 1
-#define LOG_TRACE_ENABLED 1
+#define YES 1
+#define NO 0
+
+#define RELEASE NO
+
+#define LOG_WARN_ENABLED YES
+#define LOG_INFO_ENABLED YES
+#define LOG_DEBUG_ENABLED YES
+#define LOG_TRACE_ENABLED YES
 
 #if RELEASE == 1
 #define LOG_DEBUG_ENABLED 0
@@ -23,13 +27,7 @@ typedef enum log_level {
     LOG_LEVEL_TRACE = 5
 } log_level;
 
-bool initialize_logging() {
-    return true;
-}
-void shutdown_logging() {
-}
-
-void log_output(log_level level, const char* message, ...) {
+inline void log_output(log_level level, const char* message, ...) {
     const char* level_strings[6] = {"[FATAL]: ", "[ERROR]: ", "[WARNING]: ", "[INFO]: ", "[DEBUG]: ", "[TRACE]: "};
     bool is_error = level < LOG_LEVEL_WARN;
 
@@ -46,7 +44,7 @@ void log_output(log_level level, const char* message, ...) {
     sprintf_s(out_message2, "%s%s\n", level_strings[level], out_message);
 
     // NOTE: This will be platform specific!
-    std::cout << out_message2 << std::endl;
+    std::cout << out_message2;
 }
 
 #define FFATAL(message, ...) log_output(LOG_LEVEL_FATAL, message, ##__VA_ARGS__);
@@ -79,6 +77,6 @@ void log_output(log_level level, const char* message, ...) {
 #define FTRACE(message, ...)
 #endif
 
-void report_assertion_failure(const char* expression, const char* message, const char* file, int line) {
+inline void report_assertion_failure(const char* expression, const char* message, const char* file, int line) {
     log_output(LOG_LEVEL_FATAL, "Assertion Failure: %s, message: %s, in file: %s, in line: %d\n", expression, message, file, line);
 }
