@@ -1,0 +1,5 @@
+C:/STUFF/dev/Highwind/CMakeFiles/edit_cache.dir
+C:/STUFF/dev/Highwind/CMakeFiles/rebuild_cache.dir
+C:/STUFF/dev/Highwind/Highwind/CMakeFiles/Highwind.dir
+C:/STUFF/dev/Highwind/Highwind/CMakeFiles/edit_cache.dir
+C:/STUFF/dev/Highwind/Highwind/CMakeFiles/rebuild_cache.dir

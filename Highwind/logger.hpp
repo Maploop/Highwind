@@ -1,21 +1,26 @@
 #pragma once
 
-#include <stdio.h>
+#include <iostream>
 #include <stdarg.h>
 
+// Ignore ----------------------------------------- Ignore
 #define YES 1
 #define NO 0
+// Ignore ----------------------------------------- Ignore
 
+// Configurations --------------------------------- Configurations
 #define RELEASE NO
 
 #define LOG_WARN_ENABLED YES
 #define LOG_INFO_ENABLED YES
 #define LOG_DEBUG_ENABLED YES
 #define LOG_TRACE_ENABLED YES
+// Configurations --------------------------------- Configurations
 
-#if RELEASE == 1
-#define LOG_DEBUG_ENABLED 0
-#define LOG_TRACE_ENABLED 0
+// Code Start ------------------------------------- Code Start
+#if RELEASE == YES
+#define LOG_DEBUG_ENABLED NO
+#define LOG_TRACE_ENABLED NO
 #endif
 
 typedef enum log_level {
@@ -47,34 +52,34 @@ inline void log_output(log_level level, const char* message, ...) {
     std::cout << out_message2;
 }
 
-#define FFATAL(message, ...) log_output(LOG_LEVEL_FATAL, message, ##__VA_ARGS__);
+#define HFATAL(message, ...) log_output(LOG_LEVEL_FATAL, message, ##__VA_ARGS__);
 
-#ifndef FERROR
-#define FERROR(message, ...) log_output(LOG_LEVEL_ERROR, message, ##__VA_ARGS__);
+#ifndef HERROR
+#define HERROR(message, ...) log_output(LOG_LEVEL_ERROR, message, ##__VA_ARGS__);
 #endif
 
 #if LOG_INFO_ENABLED == 1
-#define FINFO(message, ...) log_output(LOG_LEVEL_INFO, message, ##__VA_ARGS__);
+#define HINFO(message, ...) log_output(LOG_LEVEL_INFO, message, ##__VA_ARGS__);
 #else
-#define FINFO(message, ...)
+#define HINFO(message, ...)
 #endif
 
 #if LOG_WARN_ENABLED == 1
-#define FWARN(message, ...) log_output(LOG_LEVEL_WARN, message, ##__VA_ARGS__);
+#define HWARN(message, ...) log_output(LOG_LEVEL_WARN, message, ##__VA_ARGS__);
 #else
-#define FWARN(message, ...)
+#define HWARN(message, ...)
 #endif
 
 #if LOG_DEBUG_ENABLED == 1
-#define FDEBUG(message, ...) log_output(LOG_LEVEL_DEBUG, message, ##__VA_ARGS__);
+#define HDEBUG(message, ...) log_output(LOG_LEVEL_DEBUG, message, ##__VA_ARGS__);
 #else
-#define FDEBUG(message, ...)
+#define HDEBUG(message, ...)
 #endif
 
 #if LOG_TRACE_ENABLED == 1
-#define FTRACE(message, ...) log_output(LOG_LEVEL_TRACE, message, ##__VA_ARGS__);
+#define HTRACE(message, ...) log_output(LOG_LEVEL_TRACE, message, ##__VA_ARGS__);
 #else
-#define FTRACE(message, ...)
+#define HTRACE(message, ...)
 #endif
 
 inline void report_assertion_failure(const char* expression, const char* message, const char* file, int line) {

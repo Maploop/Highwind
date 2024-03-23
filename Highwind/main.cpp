@@ -1,22 +1,27 @@
-#include "Game.h"
-// #include "logger.hpp"
+#include "logger.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-//#define MODE_WIREFRAME
-
-const int WIDTH = 640;
-const int HEIGHT = 480;
-
-const int gl_major_version = 4;
-const int gl_minor_version = 5;
+#define ENGINE_VERSION = "v0.0.1-alpha";
 
 int main() {
-	Game game("FR Engine CodeENV0", 1280, 720, gl_major_version, gl_minor_version, true);
+	// Starting up glfw
+	HINFO("Starting HW Engine %s", "v0.0.1-alpha");
+	glfwInit();
+	HINFO("GLFW successfully initialized.");
 
-	while (!game.getWindowShouldClose()) {
-		game.update();
-		game.render();
+	// Setting gl versions and profiles etc.
+	HINFO("Using OpenGL library version 3.3:");
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	HTRACE("glfwWindowHint (1) - Completion status: 1");
 
-	}
+	// Create GLFW window:
+	HINFO("Creating GLFWwindow...");
+	GLFWwindow* window = glfwCreateWindow(800, 600, "HW Engine v0.0.1-alpha", GLFW_FALSE, GLFW_FALSE);
+	
 
+	glfwTerminate();
 	return 0;
 }
