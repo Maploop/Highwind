@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClInclude Include="logger.hpp" />
     <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_core.glsl" />
