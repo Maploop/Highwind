@@ -82,6 +82,9 @@ inline void log_output(log_level level, const char* message, ...) {
 #define HTRACE(message, ...)
 #endif
 
+#define HCOMPLETION(name) HTRACE("%s - Completion status: 1", name);
+#define HFAILURE(name) HERROR("%s - Completion status: 0 - Failure", name);
+
 inline void report_assertion_failure(const char* expression, const char* message, const char* file, int line) {
     log_output(LOG_LEVEL_FATAL, "Assertion Failure: %s, message: %s, in file: %s, in line: %d\n", expression, message, file, line);
 }

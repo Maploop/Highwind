@@ -154,9 +154,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger.hpp" />
+    <ClInclude Include="Shader.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_core.glsl" />
+    <None Include="shaders\basic_fragment.glsl" />
+    <None Include="shaders\basic_vertex.glsl" />
     <None Include="vertex_core.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

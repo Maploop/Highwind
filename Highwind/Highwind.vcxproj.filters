@@ -24,6 +24,9 @@
     <ClInclude Include="logger.hpp">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.hpp">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex_core.glsl">
@@ -32,5 +35,7 @@
     <None Include="fragment_core.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shaders\basic_vertex.glsl" />
+    <None Include="shaders\basic_fragment.glsl" />
   </ItemGroup>
 </Project>
