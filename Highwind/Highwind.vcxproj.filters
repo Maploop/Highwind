@@ -60,5 +60,8 @@
     <ClInclude Include="OBJLoader.hpp">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

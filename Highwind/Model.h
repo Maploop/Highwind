@@ -59,7 +59,7 @@ public:
 	void render(Shader* shader) {
 		this->updateUniforms();
 
-		this->material->send_to_shader(*shader);
+		this->material->sendToShader(*shader);
 		// Use program
 		shader->use();
 

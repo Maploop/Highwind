@@ -13,6 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Model.h"
+#include "Light.h"
 
 #define g_int32 GLint
 #define g_uint32 GLuint

@@ -76,6 +76,10 @@ void Game::updateKeyboardInput() {
 	if (isKeyPressed(GLFW_KEY_ESCAPE)) {
 		setWindowShouldClose();
 	}
+
+	if (glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+		this->pointLights[0]->setPosition(this->camera.getPosition());
+	}
 }
 
 void Game::updateMouseInput() {
@@ -113,7 +117,9 @@ void Game::render() {
 
 	// Update uniforms
 	this->updateUniforms();
-	this->models[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	for (auto& model : this->models) {
+		model->render(this->shaders[SHADER_CORE_PROGRAM]);
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -133,6 +139,7 @@ void Game::shutdown() {
 	for (size_t i = 0; i < this->materials.size(); i++) delete this->materials[i];
 	// for (size_t i = 0; i < this->meshes.size(); i++) delete this->meshes[i];
 	for (size_t i = 0; i < this->lights.size(); i++) delete this->lights[i];
+	for (size_t i = 0; i < this->pointLights.size(); i++) delete this->pointLights[i];
 
 	for (auto*& i : this->models) delete i;
 }
@@ -229,18 +236,25 @@ void Game::initMaterials() {
 void Game::initOBJModels()
 {
 	FINFO("Loading 3D Models...");
-	std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
+	// std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
 
 	std::vector<Mesh*> meshes;
 
-	meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+	// meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
-	auto quadTemp = Pyramid();
+	this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
+		this->materials[MAT_1],
+		this->textures[TEX_CONTAINER_0],
+		this->textures[TEX_AWESOMEFACE_1],
+		"resources/3d/monkey.obj"
+	));
+
+	auto quadTemp = Quad();
 	meshes.push_back(
 		new Mesh(&quadTemp,
-			glm::vec3(1.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f),
-			glm::vec3(1.0f)
+			glm::vec3(0.0f, -3.0f, 0.0f),
+			glm::vec3(-90.0f, 0.0f, 0.0f),
+			glm::vec3(100.0f)
 		));
 
 	this->models.push_back(new Model(glm::vec3(0.0f),
@@ -259,8 +273,14 @@ void Game::initModels() {
 	
 }
 
+void Game::initPointLights()
+{
+	this->pointLights.push_back(new PointLight(glm::vec3(0.0f)));
+}
+
 void Game::initLights() {
 	FINFO("Initializing lights...");
+	initPointLights();
 	this->lights.push_back(new glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
@@ -269,11 +289,14 @@ void Game::initUniforms() {
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv("viewMatrix", viewMatrix);
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv("projectionMatrix", projectionMatrix);
 
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
+	for (auto& pl : this->pointLights) {
+		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	}
+	// this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
 }
 
 void Game::updateUniforms() {
-	this->materials[MAT_1]->send_to_shader(*this->shaders[SHADER_CORE_PROGRAM]);
+	this->materials[MAT_1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
 
 	// Update frame buffer size and projection matrix
 	glfwGetFramebufferSize(this->window, &frameBufferWidth, &frameBufferHeight);
@@ -281,6 +304,10 @@ void Game::updateUniforms() {
 	this->viewMatrix = this->camera.getViewMatrix();
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv("viewMatrix", this->viewMatrix);
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f("cameraPos", camera.getPosition());
+	for (auto& pl : this->pointLights) {
+		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	}
+	//this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
 
 	this->projectionMatrix = glm::perspective(glm::radians(fov),
 		static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,

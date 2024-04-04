@@ -29,7 +29,7 @@ public:
 
 	~Material() { }
 
-	void send_to_shader(Shader& shader) {
+	void sendToShader(Shader& shader) {
 		shader.setVec3f("material.ambient", this->ambient);
 		shader.setVec3f("material.diffuse", this->diffuse);
 		shader.setVec3f("material.specular", this->specular);
