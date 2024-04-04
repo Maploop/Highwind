@@ -57,13 +57,8 @@
     <ClInclude Include="Model.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="vertex_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="fragment_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="OBJLoader.hpp">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

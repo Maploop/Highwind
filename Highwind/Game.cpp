@@ -38,6 +38,7 @@ Game::Game(const char* title, const int width, const int height, int GLmajorVer,
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
+	this->initOBJModels();
 	this->initLights();
 	this->initModels();
 	this->initUniforms();
@@ -69,12 +70,11 @@ void Game::updateKeyboardInput() {
 	if (isKeyPressed(GLFW_KEY_S)) this->camera.move(this->dt, BCK);
 	if (isKeyPressed(GLFW_KEY_A)) this->camera.move(this->dt, LEFT);
 	if (isKeyPressed(GLFW_KEY_D)) this->camera.move(this->dt, RIGHT);
-	if (isKeyPressed(GLFW_KEY_Q)) this->camPosition.y -= 0.05f;
-	if (isKeyPressed(GLFW_KEY_E)) this->camPosition.y += 0.05f;
+	if (isKeyPressed(GLFW_KEY_SPACE)) this->camera.move(this->dt, UP);
+	if (isKeyPressed(GLFW_KEY_LEFT_CONTROL)) this->camera.move(this->dt, DOWN);
 
 	if (isKeyPressed(GLFW_KEY_ESCAPE)) {
-		if (glfwGetInputMode(this->window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED) glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		setWindowShouldClose();
 	}
 }
 
@@ -201,7 +201,7 @@ void Game::initOpenGLOptions() {
 void Game::initMatrices() {
 	FINFO("Initializing matrices...");
 	this->viewMatrix = glm::mat4(1.0f);
-	this->viewMatrix = glm::lookAt(this->camPosition, this->camPosition + this->camFront, this->worldUp);
+	this->viewMatrix = camera.getViewMatrix();
 
 	this->projectionMatrix = glm::mat4(1.0f);
 	this->projectionMatrix = glm::perspective(glm::radians(this->fov),
@@ -212,7 +212,7 @@ void Game::initMatrices() {
 
 void Game::initShaders() {
 	FINFO("Initializing shaders...");
-	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "vertex_core.glsl", "fragment_core.glsl"));
+	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/vertex_core.glsl", "resources/shaders/fragment_core.glsl"));
 }
 
 void Game::initTextures() {
@@ -226,12 +226,19 @@ void Game::initMaterials() {
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(1.0f), 0, 1));
 }
 
-void Game::initModels() {
-	FINFO("Initialzing 'ENV0' models..");
+void Game::initOBJModels()
+{
+	FINFO("Loading 3D Models...");
+	std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
+
+	std::vector<Mesh*> meshes;
+
+	meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
 	auto quadTemp = Pyramid();
-	this->meshes.push_back(
+	meshes.push_back(
 		new Mesh(&quadTemp,
-			glm::vec3(0.0f),
+			glm::vec3(1.0f, 0.0f, 0.0f),
 			glm::vec3(0.0f),
 			glm::vec3(1.0f)
 		));
@@ -240,12 +247,16 @@ void Game::initModels() {
 		this->materials[MAT_1],
 		this->textures[TEX_CONTAINER_0],
 		this->textures[TEX_AWESOMEFACE_1],
-		this->meshes
-		));
+		meshes
+	));
 
-	for (auto*& i : this->meshes)
+	for (auto*& i : meshes)
 		delete i;
-	this->meshes.clear();
+	meshes.clear();
+}
+
+void Game::initModels() {
+	
 }
 
 void Game::initLights() {
@@ -269,7 +280,7 @@ void Game::updateUniforms() {
 
 	this->viewMatrix = this->camera.getViewMatrix();
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv("viewMatrix", this->viewMatrix);
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f("cameraPos", this->camPosition);
+	this->shaders[SHADER_CORE_PROGRAM]->setVec3f("cameraPos", camera.getPosition());
 
 	this->projectionMatrix = glm::perspective(glm::radians(fov),
 		static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,

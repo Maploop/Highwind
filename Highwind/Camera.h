@@ -15,7 +15,9 @@ enum direction {
 	FWD = 0,
 	BCK,
 	LEFT,
-	RIGHT
+	RIGHT,
+	UP,
+	DOWN
 };
 
 class Camera {
@@ -24,7 +26,7 @@ public:
 		this->viewMatrix = glm::mat4(1.0f);
 
 		this->movementSpeed = 3.0f;
-		this->sensitivity = 30.0f;
+		this->sensitivity = 0.3f;
 		
 		this->worldUp = worldUp;
 		this->position = position;
@@ -71,6 +73,12 @@ public:
 		case RIGHT:
 			this->position += this->right * this->movementSpeed * delta;
 			break;
+		case UP:
+			this->position += glm::vec3(0.0f, 1.0f, 0.0f) * this->movementSpeed * delta;
+			break;
+		case DOWN:
+			this->position += glm::vec3(0.0f, -1.0f, 0.0f) * this->movementSpeed * delta;
+			break;
 		default:
 			break;
 		}
@@ -106,8 +114,8 @@ private:
 	}
 
 	void updateMouseInput(const float& delta, const double& offsetX, const double& offsetY) {
-		this->pitch += static_cast<GLfloat>(-offsetY) * this->sensitivity * delta;
-		this->yaw += static_cast<GLfloat>(offsetX) * this->sensitivity * delta;
+		this->pitch += static_cast<GLfloat>(-offsetY) * this->sensitivity;
+		this->yaw += static_cast<GLfloat>(offsetX) * this->sensitivity;
 
 		if (this->pitch >= 80.0f) this->pitch = 80.0f;
 		else if (this->pitch <= -80.0f) this->pitch = -80.0f;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mesh.h"
+#include "OBJLoader.hpp"
 
 class Model {
 private:
@@ -24,6 +25,22 @@ public:
 		for (auto& i : meshes)
 			this->meshes.push_back(new Mesh(*i));
 	}
+
+	// Obj file loaded stuff
+	Model(glm::vec3 position, Material* material, Texture* overrideTexDif, Texture* overrideTexSpec, const char* obj_file) {
+		this->position = position;
+		this->material = material;
+		this->overrideTextureDiffuse = overrideTexDif;
+		this->overrideTextureSpecular = overrideTexSpec;
+
+		std::vector<Vertex> mesh = loadObjFile(obj_file);
+		this->meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+
+		for (auto& i : this->meshes) {
+			i->move(this->position);
+		}
+	}
+
 	~Model() {
 		for (auto*& i : this->meshes)
 			delete i;
@@ -46,12 +63,12 @@ public:
 		// Use program
 		shader->use();
 
-		// Bind textures
-		this->overrideTextureDiffuse->bind(0);
-		this->overrideTextureSpecular->bind(1);
+		// Draw & Bind textures
+		for (auto& i : this->meshes) {
+			this->overrideTextureDiffuse->bind(0);
+			this->overrideTextureSpecular->bind(1);
 
-		// Draw
-		for (auto& i : this->meshes)
 			i->render(shader);
+		}
 	}
 };

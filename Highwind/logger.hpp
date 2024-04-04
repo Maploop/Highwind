@@ -27,6 +27,14 @@ typedef enum log_level {
     LOG_LEVEL_TRACE = 5
 } log_level;
 
+static std::string CRESOURCE(std::string category, std::string filename) {
+    return "resources/" + category + "/" + filename;
+}
+
+static const char* CRESOURCE1(std::string category, std::string filename) {
+    return CRESOURCE(category, filename).c_str();
+}
+
 inline void log_output(log_level level, const char* message, ...) {
     const char* level_strings[6] = {"[FATAL]: ", "[ERROR]: ", "[WARNING]: ", "[INFO]: ", "[DEBUG]: ", "[TRACE]: "};
     bool is_error = level < LOG_LEVEL_WARN;
