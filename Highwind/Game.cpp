@@ -120,6 +120,9 @@ void Game::render() {
 	for (auto& model : this->models) {
 		model->render(this->shaders[SHADER_CORE_PROGRAM]);
 	}
+	for (auto& plLightModel : this->pointLights) {
+		plLightModel->render(this->shaders[SHADER_CORE_PROGRAM]);
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -275,7 +278,19 @@ void Game::initModels() {
 
 void Game::initPointLights()
 {
-	this->pointLights.push_back(new PointLight(glm::vec3(0.0f)));
+	PointLight* pl = new PointLight(glm::vec3(0.0f));
+
+	Model* model = new Model(glm::vec3(0.0f),
+		this->materials[MAT_1],
+		new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D),
+		this->textures[TEX_CONTAINER_0],
+		"resources/3d/sphere.obj");
+	model->scale(0.5f);
+	model->rotate(glm::vec3(-180, 0, 0));
+	
+	pl->setLightModel(model);
+
+	this->pointLights.push_back(pl);
 }
 
 void Game::initLights() {

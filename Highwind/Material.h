@@ -36,6 +36,14 @@ public:
 		shader.set1i("material.diffuseTex", this->diffuseTex);
 		shader.set1i("material.specularTex", this->specularTex);
 	}
+
+	GLint getDiffuseTextureUnit() {
+		return diffuseTex;
+	}
+
+	GLint getSpecularTextureUnit() {
+		return specularTex;
+	}
 private:
 	glm::vec3 ambient;
 	glm::vec3 diffuse;

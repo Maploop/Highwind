@@ -46,6 +46,22 @@ public:
 			delete i;
 	}
 
+	void setPosition(glm::vec3 newPos) {
+		this->position = newPos;
+		for (auto& i : this->meshes) {
+			i->setPosition(this->position);
+		}
+	}
+
+	void scale(glm::vec3 scale) {
+		for (auto& i : this->meshes)
+			i->setScale(scale);
+	}
+
+	void scale(float scale) {
+		this->scale(glm::vec3(scale));
+	}
+
 	// functions
 	void rotate(glm::vec3 rotation) {
 		for (auto& i : this->meshes)
@@ -65,8 +81,16 @@ public:
 
 		// Draw & Bind textures
 		for (auto& i : this->meshes) {
-			this->overrideTextureDiffuse->bind(0);
-			this->overrideTextureSpecular->bind(1);
+			glActiveTexture(GL_TEXTURE0 + 0);
+			glBindTexture(GL_TEXTURE_2D, material->getDiffuseTextureUnit());
+
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, material->getSpecularTextureUnit());
+
+			if (overrideTextureSpecular)
+				this->overrideTextureSpecular->bind(1);
+			if (overrideTextureDiffuse)
+				this->overrideTextureDiffuse->bind(0);
 
 			i->render(shader);
 		}

@@ -27,8 +27,7 @@ out vec4 fs_color;
 
 // Uniforms
 uniform Material material;
-uniform PointLight pointLight;
-uniform vec3 lightPos0;
+uniform PointLight[10] pointLight;
 uniform vec3 cameraPos;
 
 // Functions
@@ -54,23 +53,44 @@ vec3 calc_specular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lig
 }
 
 void main() {
+	vec3 ambientFinal;
+	vec3 diffuseLight;
+	vec3 specularLight;
+	
+	for (int i = 0; i < 10; i++) {
+		vec3 ambientLight = calc_ambient(material);
+		vec3 diffuseFinal = calc_diffuse(material, vs_position, vs_normal, pointLight[i].position);
+		vec3 specularFinal = calc_specular(material, vs_position, vs_normal, pointLight[i].position, cameraPos);
+		
+		float distance1 = length(pointLight[i].position - vs_position);
+		float attenuatoion = pointLight[i].constant / (1.0f + pointLight[i].linear * distance1 + pointLight[i].quadratic * (distance1 * distance1));
+		
+		ambientLight *= attenuatoion;
+		diffuseFinal *= attenuatoion;
+		specularFinal *= attenuatoion;
+		
+		ambientFinal += ambientLight;
+		diffuseLight += diffuseFinal;
+		specularLight += specularFinal;
+	}
+	
 	// fs_color = texture(texture0, vs_texcoord) * texture(texture1, vs_texcoord) * vec4(vs_color, 1.0f);
 
 	// Lighting
-	vec3 ambientLight = calc_ambient(material);
-	vec3 diffuseFinal = calc_diffuse(material, vs_position, vs_normal, pointLight.position);
-	vec3 specularFinal = calc_specular(material, vs_position, vs_normal, pointLight.position, cameraPos);
+	// vec3 ambientLight = calc_ambient(material);
+	// vec3 diffuseFinal = calc_diffuse(material, vs_position, vs_normal, pointLight.position);
+	// vec3 specularFinal = calc_specular(material, vs_position, vs_normal, pointLight.position, cameraPos);
 
 	// attenuatoion
-	float distance1 = length(pointLight.position - vs_position);
-	float attenuatoion = pointLight.constant / (1.0f + pointLight.linear * distance1 + pointLight.quadratic * (distance1 * distance1));
+	// float distance1 = length(pointLight.position - vs_position);
+	// float attenuatoion = pointLight.constant / (1.0f + pointLight.linear * distance1 + pointLight.quadratic * (distance1 * distance1));
 
 	// final light
-	vec3 ambientFinal = ambientLight * attenuatoion;
-	vec3 diffuseLight = diffuseFinal * attenuatoion;
-	vec3 specularLight = specularFinal * attenuatoion;
+	// vec3 ambientFinal = ambientLight * attenuatoion;
+	// vec3 diffuseLight = diffuseFinal * attenuatoion;
+	// vec3 specularLight = specularFinal * attenuatoion;
 
 	fs_color = 
 	texture(material.diffuseTex, vs_texcoord) 
-	* (vec4(ambientFinal, 1.0f) + vec4(diffuseLight, 1.0f) + vec4(specularLight, 1.0f)) * attenuatoion;
+	* (vec4(ambientFinal, 1.0f) + vec4(diffuseLight, 1.0f) + vec4(specularLight, 1.0f));
 }
