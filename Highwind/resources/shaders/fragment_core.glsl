@@ -85,6 +85,8 @@ void main() {
 		specularLight += specularFinal;
 	}
 
+	float gamma = 2.2;
+	
 	fs_color = 
 	texture(material.diffuseTex, vs_texcoord) 
 	* (vec4(ambientFinal, 1.0f) + vec4(diffuseLight, 1.0f) + vec4(specularLight, 1.0f));

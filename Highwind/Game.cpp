@@ -82,12 +82,13 @@ void Game::updateKeyboardInput()
 
 	if (isKeyPressed(GLFW_KEY_ESCAPE)) 
 	{
-		
-		if (glfwGetInputMode(this->window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-			glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		else
-			glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
+}
+
+static void backToGame(GLFWwindow* win)
+{
+	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::updateMouseInput() 
@@ -135,10 +136,23 @@ void Game::imGuiRender()
 {
 	ImGui::Begin("Local Camera Point Light #1");
 	ImGui::Checkbox("Blinn Phong", &pointLights[0]->blinn);
-	ImGui::SliderFloat3("Light Position", (float*) & pointLights[0]->position, 0.0f, 100.0f);
+	ImGui::SliderFloat3("Light Position", (float*) & pointLights[0]->position, -100.0f, 100.0f);
 	ImGui::SliderFloat("Constant", &pointLights[0]->constant, 0.0f, 100.0f);
 	ImGui::SliderFloat("Linear", &pointLights[0]->linear, 0.0f, 100.0f);
 	ImGui::SliderFloat("Quadratic", &pointLights[0]->quadratic, 0.0f, 100.0f);
+	ImGui::End();
+
+	ImGui::Begin("Engine Options");
+	if (ImGui::Button("Compile & Run"))
+	{
+		FINFO("Compiling changes and running the game...");
+		backToGame(this->window);
+	}
+	if (ImGui::Button("Exit"))
+	{
+		FINFO("Exiting...");
+		setWindowShouldClose();
+	}
 	ImGui::End();
 
 	ImGui::Render();
@@ -201,7 +215,7 @@ void Game::initImgui()
 	ImGui::CreateContext();
 	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
@@ -256,6 +270,7 @@ void Game::initOpenGLOptions()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	glEnable(GL_BLEND);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 #ifdef MODE_WIREFRAME
@@ -347,7 +362,7 @@ void Game::initModels()
 
 void Game::initPointLights()
 {
-	PointLight* pl = new PointLight(glm::vec3(0.0f), true, 10.0f, glm::vec3(1.0f), 10.0f);
+	PointLight* pl = new PointLight(glm::vec3(0.0f), true, 1.0f, glm::vec3(1.0f), 2.0f);
 
 	Model* model = new Model(glm::vec3(0.0f),
 		this->materials[MAT_1],
