@@ -12,16 +12,17 @@ enum shader_enum {
 };
 
 enum texture_enum {
-	TEX_CONTAINER_0 = 0,
-	TEX_AWESOMEFACE_1
+	TEXTURE_CONTAINER = 0,
+	TEXTURE_AWESOMEFACE,
+	TEXTURE_WALL,
+	SPECULAR_CONTAINER,
+	TEXTURE_LIGHTBULB,
+	TEXTURE_WOODEN_FLOOR
 };
 
 enum material_enum {
-	MAT_1 = 0
-};
-
-enum mesh_enum {
-	MESH_QUAD = 0
+	MATERIAL_DEFAULT = 0,
+	MATERIAL_LIT
 };
 
 class Game

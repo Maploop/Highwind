@@ -138,8 +138,8 @@ void Game::imGuiRender()
 	ImGui::Checkbox("Blinn Phong", &pointLights[0]->blinn);
 	ImGui::SliderFloat3("Light Position", (float*) & pointLights[0]->position, -100.0f, 100.0f);
 	ImGui::SliderFloat("Constant", &pointLights[0]->constant, 0.0f, 100.0f);
-	ImGui::SliderFloat("Linear", &pointLights[0]->linear, 0.0f, 100.0f);
-	ImGui::SliderFloat("Quadratic", &pointLights[0]->quadratic, 0.0f, 100.0f);
+	ImGui::SliderFloat("Linear", &pointLights[0]->linear, 0.0f, 2.0f);
+	ImGui::SliderFloat("Quadratic", &pointLights[0]->quadratic, 0.0f, 2.0f);
 	ImGui::End();
 
 	ImGui::Begin("Engine Options");
@@ -311,11 +311,14 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("resources/textures/awesomeface.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/wall.jpg", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/container2_specular.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("resources/textures/wooden_floor.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials() 
 {
 	FINFO("Initializing materials...");
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(1.0f), 0, 1));
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(1.0f), 0, 1));
 }
 
@@ -329,9 +332,9 @@ void Game::initOBJModels()
 	// meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
 	this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
-		this->materials[MAT_1],
-		this->textures[2],
-		this->textures[3],
+		this->materials[MATERIAL_DEFAULT],
+		this->textures[TEXTURE_LIGHTBULB],
+		this->textures[TEXTURE_LIGHTBULB],
 		"resources/3d/monkey.obj"
 	));
 
@@ -344,11 +347,19 @@ void Game::initOBJModels()
 		));
 
 	this->models.push_back(new Model(glm::vec3(0.0f),
-		this->materials[MAT_1],
-		this->textures[2],
-		this->textures[TEX_AWESOMEFACE_1],
+		this->materials[MATERIAL_DEFAULT],
+		this->textures[TEXTURE_WOODEN_FLOOR],
+		this->textures[TEXTURE_WOODEN_FLOOR],
 		meshes
 	));
+
+	Model* model1 = new Model(glm::vec3(0.0f),
+		this->materials[MATERIAL_LIT],
+		this->textures[TEXTURE_LIGHTBULB],
+		this->textures[TEXTURE_LIGHTBULB],
+		"resources/3d/sphere.obj");
+	model1->scale(10);
+	this->models.push_back(model1);
 
 	for (auto*& i : meshes)
 		delete i;
@@ -365,9 +376,9 @@ void Game::initPointLights()
 	PointLight* pl = new PointLight(glm::vec3(0.0f), true, 1.0f, glm::vec3(1.0f), 2.0f);
 
 	Model* model = new Model(glm::vec3(0.0f),
-		this->materials[MAT_1],
-		new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D),
-		this->textures[TEX_CONTAINER_0],
+		this->materials[MATERIAL_DEFAULT],
+		this->textures[TEXTURE_LIGHTBULB],
+		this->textures[TEXTURE_CONTAINER],
 		"resources/3d/sphere.obj");
 	model->scale(0.5f);
 	model->rotate(glm::vec3(-180, 0, 0));
@@ -400,7 +411,7 @@ void Game::initUniforms()
 
 void Game::updateUniforms() 
 {
-	this->materials[MAT_1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	this->materials[MATERIAL_DEFAULT]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
 
 	// Update frame buffer size and projection matrix
 	glfwGetFramebufferSize(this->window, &frameBufferWidth, &frameBufferHeight);
