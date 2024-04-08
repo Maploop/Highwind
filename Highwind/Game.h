@@ -42,8 +42,10 @@ public:
 	void updateMouseInput();
 	void updateInput();
 	void update();
+	void imGuiUpdate();
+	void imGuiRender();
 	void render();
-	void shutdown();	
+	void shutdown();
 
 	// Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
@@ -93,6 +95,7 @@ private:
 	std::vector<Model*> models;
 
 	// Private functions
+	void initImgui();
 	void initGlfw();
 	void initWindow();
 	void initGlew();

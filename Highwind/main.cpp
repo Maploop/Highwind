@@ -9,14 +9,22 @@ const int HEIGHT = 480;
 const int gl_major_version = 4;
 const int gl_minor_version = 5;
 
-int main() {
+int main() 
+{
 	Game game("FR Engine CodeENV0", 1280, 720, gl_major_version, gl_minor_version, true);
 
-	while (!game.getWindowShouldClose()) {
+	// HNetworkingAgent communicationAgent;
+	// communicationAgent.start();
+
+	while (!game.getWindowShouldClose()) 
+	{
 		game.update();
 		game.render();
-
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	return 0;
 }

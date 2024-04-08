@@ -1,12 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\libraries\glad\src\glad.c" />
     <ClCompile Include="main.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\glad\src\glad.c">
+      <Filter>Engine\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_demo.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_draw.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_tables.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_widgets.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_impl_glfw.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Engine\Vendor\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -21,6 +44,18 @@
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{367b8523-5902-4ae6-96c8-7d56183458a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Networking">
+      <UniqueIdentifier>{e9e6db2d-3b80-47d5-a03f-301af9c840f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Vendor">
+      <UniqueIdentifier>{cea8365e-8743-4369-8301-28ec235f0fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Vendor\imgui">
+      <UniqueIdentifier>{392dcebd-ea0a-4320-a4cd-16bc0adc23f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Vendor\imgui\headers">
+      <UniqueIdentifier>{f819520a-743e-49cb-84a6-a4c3fef96f04}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +97,33 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imconfig.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imgui.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imgui_internal.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imstb_rectpack.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imstb_textedit.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imstb_truetype.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imgui_impl_glfw.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imgui_impl_opengl3.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libraries\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Engine\Vendor\imgui\headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

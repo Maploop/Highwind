@@ -3,14 +3,16 @@
 #include "defines.h"
 
 // base
-class Light {
+class Light 
+{
 protected:
 	float intensity;
 	glm::vec3 color;
 	Model* model = 0;
 
 public:
-	Light(float intensity, glm::vec3 color) : intensity(intensity), color(color) {
+	Light(float intensity, glm::vec3 color) : intensity(intensity), color(color) 
+	{
 
 	}
 
@@ -18,13 +20,16 @@ public:
 
 	}
 
-	void render(Shader* shader) {
-		if (model) {
+	void render(Shader* shader) 
+	{
+		if (model) 
+		{
 			model->render(shader);
 		}
 	}
 
-	void setLightModel(Model* m) {
+	void setLightModel(Model* m) 
+	{
 		this->model = m;
 		onLightModelSet();
 	}
@@ -33,26 +38,33 @@ public:
 	virtual void onLightModelSet() = 0;
 };
 
-class PointLight : public Light {
+class PointLight : public Light 
+{
 protected:
+
+public:
 	glm::vec3 position;
 	float constant;
 	float linear;
 	float quadratic;
+	bool blinn;
 
-public:
-	PointLight(glm::vec3 position, float intensity = 1.0f, glm::vec3 color = glm::vec3(1.0f), float constant = 1.0f, float linear = 0.045f, float quadratic = 0.0075f)
-		: Light(intensity, color), position(position), constant(constant), linear(linear), quadratic(quadratic) {
-
-	}
-
-	~PointLight() {
+	PointLight(glm::vec3 position, bool blinn = false, float intensity = 1.0f, glm::vec3 color = glm::vec3(1.0f), float constant = 1.0f, float linear = 0.045f, float quadratic = 0.0075f)
+		: blinn(blinn), Light(intensity, color), position(position), constant(constant), linear(linear), quadratic(quadratic) 
+	{
 
 	}
 
-	void setPosition(const glm::vec3 pos) {
+	~PointLight() 
+	{
+
+	}
+
+	void setPosition(const glm::vec3 pos) 
+	{
 		this->position = pos;
-		if (model) {
+		if (model) 
+		{
 			model->setPosition(pos);
 		}
 	}
@@ -61,12 +73,21 @@ public:
 		this->model->setPosition(this->position);
 	}
 
-	void sendToShader(Shader& program) {
+	void setBlinn(bool blinn)
+	{
+		this->blinn = blinn;
+	}
+
+	void sendToShader(Shader& program) 
+	{
+		model->setPosition(this->position);
+
 		program.setVec3f("pointLight[0].position", position);
 		program.set1f("pointLight[0].intensity", intensity);
 		program.setVec3f("pointLight[0].color", color);
 		program.set1f("pointLight[0].constant", constant);
 		program.set1f("pointLight[0].linear", linear);
 		program.set1f("pointLight[0].quadratic", quadratic);
+		program.set1f("pointLight[0].blinn", blinn);
 	}
 };
