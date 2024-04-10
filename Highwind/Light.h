@@ -2,13 +2,11 @@
 
 #include "defines.h"
 
-// base
-class Light 
+class Light : public Component
 {
 protected:
 	float intensity;
 	glm::vec3 color;
-	Model* model = 0;
 
 public:
 	Light(float intensity, glm::vec3 color) : intensity(intensity), color(color) 
@@ -20,22 +18,12 @@ public:
 
 	}
 
-	void render(Shader* shader) 
+	void render(Shader* shader)
 	{
-		if (model) 
-		{
-			model->render(shader);
-		}
-	}
-
-	void setLightModel(Model* m) 
-	{
-		this->model = m;
-		onLightModelSet();
+		this->renderAllChildren(shader);
 	}
 
 	virtual void sendToShader(Shader& program) = 0;
-	virtual void onLightModelSet() = 0;
 };
 
 class PointLight : public Light 
@@ -63,14 +51,15 @@ public:
 	void setPosition(const glm::vec3 pos) 
 	{
 		this->position = pos;
-		if (model) 
+		for (auto& child : getChildren())
 		{
-			model->setPosition(pos);
+			child->setPosition(pos);
 		}
 	}
 
-	void onLightModelSet() {
-		this->model->setPosition(this->position);
+	void onChildAdded(Component* child)
+	{
+		child->setPosition(this->position);
 	}
 
 	void setBlinn(bool blinn)
@@ -80,7 +69,10 @@ public:
 
 	void sendToShader(Shader& program) 
 	{
-		model->setPosition(this->position);
+		for (auto& child : getChildren())
+		{
+			child->setPosition(position);
+		}
 
 		program.setVec3f("pointLight[0].position", position);
 		program.set1f("pointLight[0].intensity", intensity);

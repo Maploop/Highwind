@@ -7,6 +7,7 @@ struct Material {
 
 	sampler2D diffuseTex;
 	sampler2D specularTex;
+	samplerCube depthMap;
 };
 
 struct PointLight {
@@ -26,10 +27,21 @@ in vec3 vs_normal;
 
 out vec4 fs_color;
 
+vec3 gridSamplingDisk[20] = vec3[]
+(
+   vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1), 
+   vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
+   vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
+   vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
+   vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
+);
+
 // Uniforms
 uniform Material material;
 uniform PointLight[10] pointLight;
 uniform vec3 cameraPos;
+uniform bool useShadows;
+uniform float far_plane;
 
 // Functions
 vec3 calc_ambient(Material material) {
@@ -63,10 +75,33 @@ vec3 calc_specular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lig
 	return specularFinal;
 }
 
+float calculateShadows(vec3 fragPos, vec3 lightPos)
+{
+	vec3 fragToLight = fragPos - lightPos;
+	float currentDepth = length(fragToLight);
+
+	float shadow = 0.0;
+    float bias = 0.15;
+    int samples = 20;
+    float viewDistance = length(cameraPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+    for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(material.depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= far_plane;   // undo mapping [0;1]
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+	
+	return shadow;
+}
+
 void main() {
 	vec3 ambientFinal;
 	vec3 diffuseLight;
 	vec3 specularLight;
+	float shadow;
 	
 	for (int i = 0; i < 10; i++) {
 		vec3 ambientLight = calc_ambient(material);
@@ -75,6 +110,7 @@ void main() {
 		
 		float distance1 = length(pointLight[i].position - vs_position);
 		float attenuatoion = pointLight[i].constant / (1.0f + pointLight[i].linear * distance1 + pointLight[i].quadratic * (distance1 * distance1));
+		//float s = useShadows ? calculateShadows(vs_position, pointLight[i].position) : 0.0;
 		
 		ambientLight *= attenuatoion;
 		diffuseFinal *= attenuatoion;
@@ -83,9 +119,11 @@ void main() {
 		ambientFinal += ambientLight;
 		diffuseLight += diffuseFinal;
 		specularLight += specularFinal;
+		//shadow += s;
 	}
-
-	float gamma = 2.2;
+	
+	// vec3 color = texture(material.diffuseTex, vs_texcoord).rgb;
+	// vec3 lighting = (ambientFinal + (diffuseLight + specularLight)) * color;
 	
 	fs_color = 
 	texture(material.diffuseTex, vs_texcoord) 

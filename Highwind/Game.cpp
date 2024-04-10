@@ -132,17 +132,22 @@ void Game::imGuiUpdate()
 	ImGui::NewFrame();
 }
 
+bool render_shadows = true;
+
 void Game::imGuiRender()
 {
-	ImGui::Begin("Local Camera Point Light #1");
-	ImGui::Checkbox("Blinn Phong", &pointLights[0]->blinn);
-	ImGui::SliderFloat3("Light Position", (float*) & pointLights[0]->position, -100.0f, 100.0f);
+	ImGui::Begin("Local PL");
+	ImGui::Text("Transform ->");
+	ImGui::DragFloat3("Light Position", (float*) & pointLights[0]->position, 0.2f);
+	ImGui::Text("Point Light ->");
 	ImGui::SliderFloat("Constant", &pointLights[0]->constant, 0.0f, 100.0f);
-	ImGui::SliderFloat("Linear", &pointLights[0]->linear, 0.0f, 2.0f);
-	ImGui::SliderFloat("Quadratic", &pointLights[0]->quadratic, 0.0f, 2.0f);
+	ImGui::SliderFloat("Linear", &pointLights[0]->linear, 0.0f, 100.0f);
+	ImGui::SliderFloat("Quadratic", &pointLights[0]->quadratic, 0.0f, 100.0f);
+	ImGui::Checkbox("Blinn Phong", &pointLights[0]->blinn);
 	ImGui::End();
 
-	ImGui::Begin("Engine Options");
+	ImGui::Begin("Engine & Rendering Options");
+	
 	if (ImGui::Button("Compile & Run"))
 	{
 		FINFO("Compiling changes and running the game...");
@@ -153,6 +158,7 @@ void Game::imGuiRender()
 		FINFO("Exiting...");
 		setWindowShouldClose();
 	}
+	ImGui::Checkbox("Shadows", &render_shadows);
 	ImGui::End();
 
 	ImGui::Render();
@@ -215,7 +221,7 @@ void Game::initImgui()
 	ImGui::CreateContext();
 	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsClassic();
+	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
@@ -302,6 +308,7 @@ void Game::initShaders()
 {
 	FINFO("Initializing shaders...");
 	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/vertex_core.glsl", "resources/shaders/fragment_core.glsl"));
+	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/depth_vertex.glsl", "resources/shaders/depth_fragment.glsl", "resources/shaders/depth_geometry.glsl"));
 }
 
 void Game::initTextures() 
@@ -313,6 +320,7 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("resources/textures/container2_specular.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/wooden_floor.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("resources/textures/skybox.jpg", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials() 
@@ -353,13 +361,13 @@ void Game::initOBJModels()
 		meshes
 	));
 
-	Model* model1 = new Model(glm::vec3(0.0f),
+	Model* skybox = new Model(glm::vec3(0.0f),
 		this->materials[MATERIAL_LIT],
-		this->textures[TEXTURE_LIGHTBULB],
-		this->textures[TEXTURE_LIGHTBULB],
+		this->textures[TEXTURE_SKYBOX],
+		this->textures[TEXTURE_SKYBOX],
 		"resources/3d/sphere.obj");
-	model1->scale(10);
-	this->models.push_back(model1);
+	skybox->scale(10);
+	this->models.push_back(skybox);
 
 	for (auto*& i : meshes)
 		delete i;
@@ -383,7 +391,7 @@ void Game::initPointLights()
 	model->scale(0.5f);
 	model->rotate(glm::vec3(-180, 0, 0));
 
-	pl->setLightModel(model);
+	pl->addChild(model);
 
 	this->pointLights.push_back(pl);
 }
@@ -419,6 +427,8 @@ void Game::updateUniforms()
 	this->viewMatrix = this->camera.getViewMatrix();
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv("viewMatrix", this->viewMatrix);
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f("cameraPos", camera.getPosition());
+	this->shaders[SHADER_CORE_PROGRAM]->set1f("far_plane", camera.getFarPlane());
+	this->shaders[SHADER_CORE_PROGRAM]->set1f("useShadows", render_shadows);
 	for (auto& pl : this->pointLights) 
 	{
 		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);

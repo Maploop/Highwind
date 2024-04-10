@@ -171,6 +171,7 @@
     <ClInclude Include="..\libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="..\libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Light.h" />
@@ -183,6 +184,13 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\depth_fragment.glsl" />
+    <None Include="resources\shaders\depth_geometry.glsl" />
+    <None Include="resources\shaders\depth_vertex.glsl" />
+    <None Include="resources\shaders\fragment_core.glsl" />
+    <None Include="resources\shaders\vertex_core.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

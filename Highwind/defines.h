@@ -18,6 +18,7 @@
 
 #include "Model.h"
 #include "Light.h"
+#include "Component.h"
 
 #define g_int32 GLint
 #define g_uint32 GLuint

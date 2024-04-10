@@ -87,6 +87,11 @@ public:
 	void updateKeyboardInput(const float& delta, const int direction) {
 
 	}
+
+	float getFarPlane()
+	{
+		return 70.0f;
+	}
 private:
 	glm::mat4 viewMatrix;
 

@@ -8,7 +8,8 @@
 
 // enumerations
 enum shader_enum {
-	SHADER_CORE_PROGRAM = 0
+	SHADER_CORE_PROGRAM = 0,
+	SHADER_DEPTH
 };
 
 enum texture_enum {
@@ -17,7 +18,8 @@ enum texture_enum {
 	TEXTURE_WALL,
 	SPECULAR_CONTAINER,
 	TEXTURE_LIGHTBULB,
-	TEXTURE_WOODEN_FLOOR
+	TEXTURE_WOODEN_FLOOR,
+	TEXTURE_SKYBOX
 };
 
 enum material_enum {

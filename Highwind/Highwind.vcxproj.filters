@@ -57,6 +57,9 @@
     <Filter Include="Engine\Vendor\imgui\headers">
       <UniqueIdentifier>{f819520a-743e-49cb-84a6-a4c3fef96f04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core\Components">
+      <UniqueIdentifier>{beb0c829-c4e5-4b9e-9b77-afb5d3daec27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger.hpp">
@@ -77,9 +80,6 @@
     <ClInclude Include="Vertex.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Primitives.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
@@ -89,13 +89,7 @@
     <ClInclude Include="Camera.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="OBJLoader.hpp">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\libraries\imgui\imconfig.h">
@@ -125,5 +119,34 @@
     <ClInclude Include="..\libraries\imgui\imgui_impl_opengl3_loader.h">
       <Filter>Engine\Vendor\imgui\headers</Filter>
     </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Core\Components</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\vertex_core.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\fragment_core.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\depth_fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\depth_vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\depth_geometry.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

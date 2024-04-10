@@ -2,8 +2,9 @@
 
 #include "Mesh.h"
 #include "OBJLoader.hpp"
+#include "Component.h"
 
-class Model {
+class Model : public Component {
 private:
 	Material* material;
 	Texture* overrideTextureDiffuse;
@@ -53,6 +54,11 @@ public:
 		}
 	}
 
+	glm::vec3 getPosition()
+	{
+		return this->position;
+	}
+
 	void scale(glm::vec3 scale) {
 		for (auto& i : this->meshes)
 			i->setScale(scale);
@@ -94,5 +100,17 @@ public:
 
 			i->render(shader);
 		}
+	}
+
+	void move(glm::vec3 pos)
+	{
+		for (auto& i : this->meshes) {
+			i->move(this->position);
+		}
+	}
+
+	void componentRender(Shader* shader)
+	{
+		render(shader);
 	}
 };
