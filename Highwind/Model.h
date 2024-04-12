@@ -3,25 +3,26 @@
 #include "Mesh.h"
 #include "OBJLoader.hpp"
 #include "Component.h"
+#include "GlobalCache.h"
 
 class Model : public Component {
 private:
 	Material* material;
-	Texture* overrideTextureDiffuse;
-	Texture* overrideTextureSpecular;
+	Texture* override_texture_diffuse;
+	Texture* override_texture_specular;
 	std::vector<Mesh*> meshes;
 
 	glm::vec3 position;
 
-	void updateUniforms() {
+	void update_uniforms() {
 
 	}
 public:
 	Model(glm::vec3 position, Material* material, Texture* overrideTexDif, Texture* overrideTexSpec, std::vector<Mesh*> meshes) {
 		this->position = position;
 		this->material = material;
-		this->overrideTextureDiffuse = overrideTexDif;
-		this->overrideTextureSpecular = overrideTexSpec;
+		this->override_texture_diffuse = overrideTexDif;
+		this->override_texture_specular = overrideTexSpec;
 
 		for (auto& i : meshes)
 			this->meshes.push_back(new Mesh(*i));
@@ -31,11 +32,22 @@ public:
 	Model(glm::vec3 position, Material* material, Texture* overrideTexDif, Texture* overrideTexSpec, const char* obj_file) {
 		this->position = position;
 		this->material = material;
-		this->overrideTextureDiffuse = overrideTexDif;
-		this->overrideTextureSpecular = overrideTexSpec;
+		this->override_texture_diffuse = overrideTexDif;
+		this->override_texture_specular = overrideTexSpec;
 
-		std::vector<Vertex> mesh = loadObjFile(obj_file);
-		this->meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+		if (CacheHolder::is_mesh_cached(obj_file))
+		{
+			this->meshes.push_back(CacheHolder::find_cached_mesh(obj_file));
+			FINFO("Loading cached mesh");
+		}
+		else
+		{
+			std::vector<Vertex> meshdata = load_from_obj(obj_file);
+			Mesh* mesh = new Mesh(meshdata.data(), meshdata.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+			CacheHolder::cache_mesh_data(obj_file, mesh);
+			this->meshes.push_back(mesh);
+		}
+		
 
 		for (auto& i : this->meshes) {
 			i->move(this->position);
@@ -47,10 +59,10 @@ public:
 			delete i;
 	}
 
-	void setPosition(glm::vec3 newPos) {
+	void set_position(glm::vec3 newPos) {
 		this->position = newPos;
 		for (auto& i : this->meshes) {
-			i->setPosition(this->position);
+			i->set_position(this->position);
 		}
 	}
 
@@ -61,7 +73,7 @@ public:
 
 	void scale(glm::vec3 scale) {
 		for (auto& i : this->meshes)
-			i->setScale(scale);
+			i->set_scale(scale);
 	}
 
 	void scale(float scale) {
@@ -79,24 +91,24 @@ public:
 	}
 
 	void render(Shader* shader) {
-		this->updateUniforms();
+		this->update_uniforms();
 
-		this->material->sendToShader(*shader);
+		this->material->send_to_shader(*shader);
 		// Use program
 		shader->use();
 
 		// Draw & Bind textures
 		for (auto& i : this->meshes) {
 			glActiveTexture(GL_TEXTURE0 + 0);
-			glBindTexture(GL_TEXTURE_2D, material->getDiffuseTextureUnit());
+			glBindTexture(GL_TEXTURE_2D, material->get_diffuse_texture_unit());
 
 			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, material->getSpecularTextureUnit());
+			glBindTexture(GL_TEXTURE_2D, material->get_specular_texture_unit());
 
-			if (overrideTextureSpecular)
-				this->overrideTextureSpecular->bind(1);
-			if (overrideTextureDiffuse)
-				this->overrideTextureDiffuse->bind(0);
+			if (override_texture_specular)
+				this->override_texture_specular->bind(1);
+			if (override_texture_diffuse)
+				this->override_texture_diffuse->bind(0);
 
 			i->render(shader);
 		}
@@ -109,8 +121,8 @@ public:
 		}
 	}
 
-	void componentRender(Shader* shader)
+	void component_render(Shader* shader)
 	{
-		render(shader);
+		this->render(shader);
 	}
 };

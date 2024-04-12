@@ -37,14 +37,14 @@ public:
 		this->yaw = -90.0f;
 		this->roll = 0.0f;
 
-		this->updateCameraVectors();
+		this->update_cam_vectors();
 	}
 	~Camera() {
 
 	}
 	// accessors
-	const glm::mat4 getViewMatrix() {
-		this->updateCameraVectors();
+	const glm::mat4 get_view_matrix() {
+		this->update_cam_vectors();
 		this->viewMatrix = glm::lookAt(this->position, this->position + this->front, this->up);
 		return this->viewMatrix;
 	}
@@ -54,9 +54,9 @@ public:
 	}
 
 	// functions
-	void updateInput(const float& delta, const int direction, const double& offsetX, const double& offsetY) {
-		this->updateKeyboardInput(delta, direction);
-		this->updateMouseInput(delta, offsetX, offsetY);
+	void update_input(const float& delta, const int direction, const double& offsetX, const double& offsetY) {
+		this->update_keyboard_input(delta, direction);
+		this->update_mouse_input(delta, offsetX, offsetY);
 	}
 
 	void move(const float& delta, const int direction) {
@@ -84,11 +84,11 @@ public:
 		}
 	}
 
-	void updateKeyboardInput(const float& delta, const int direction) {
+	void update_keyboard_input(const float& delta, const int direction) {
 
 	}
 
-	float getFarPlane()
+	float get_far_plane()
 	{
 		return 70.0f;
 	}
@@ -108,7 +108,7 @@ private:
 	GLfloat pitch;
 	GLfloat roll;
 
-	void updateCameraVectors() {
+	void update_cam_vectors() {
 		this->front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
 		this->front.y = sin(glm::radians(this->pitch));
 		this->front.z = sin(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));
@@ -118,7 +118,7 @@ private:
 		this->up = glm::normalize(glm::cross(this->right, this->front));
 	}
 
-	void updateMouseInput(const float& delta, const double& offsetX, const double& offsetY) {
+	void update_mouse_input(const float& delta, const double& offsetX, const double& offsetY) {
 		this->pitch += static_cast<GLfloat>(-offsetY) * this->sensitivity;
 		this->yaw += static_cast<GLfloat>(offsetX) * this->sensitivity;
 

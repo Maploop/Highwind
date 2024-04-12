@@ -18,7 +18,7 @@
 #include "Vertex.h"
 #include "logger.hpp"
 
-static std::vector<Vertex> loadObjFile(const char* file_name) {
+static std::vector<Vertex> load_from_obj(const char* file_name) {
 	// portions
 	std::vector<glm::fvec3> positions;
 	std::vector<glm::fvec2> texcoords;

@@ -27,17 +27,17 @@ public:
 		this->diffuseTex = diffuseTex;
 		this->specularTex = specularTex;
 
-		generateDepthCubemap();
+		generate_depth_cubemap();
 	}
 
 	~Material() { }
 
-	void sendToShader(Shader& shader) {
-		shader.setVec3f("material.ambient", this->ambient);
-		shader.setVec3f("material.diffuse", this->diffuse);
-		shader.setVec3f("material.specular", this->specular);
-		shader.set1i("material.diffuseTex", this->diffuseTex);
-		shader.set1i("material.specularTex", this->specularTex);
+	void send_to_shader(Shader& shader) {
+		shader.set_vec3f("material.ambient", this->ambient);
+		shader.set_vec3f("material.diffuse", this->diffuse);
+		shader.set_vec3f("material.specular", this->specular);
+		shader.set_1i("material.diffuseTex", this->diffuseTex);
+		shader.set_1i("material.specularTex", this->specularTex);
 	}
 
 	//void startDepthFrame(Shader& depth, std::vector<PointLight*> lights)
@@ -73,11 +73,11 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	GLint getDiffuseTextureUnit() {
+	GLint get_diffuse_texture_unit() {
 		return diffuseTex;
 	}
 
-	GLint getSpecularTextureUnit() {
+	GLint get_specular_texture_unit() {
 		return specularTex;
 	}
 private:
@@ -92,7 +92,7 @@ private:
 
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
-	void generateDepthCubemap()
+	void generate_depth_cubemap()
 	{
 		glGenFramebuffers(1, &depthMapFBO);
 

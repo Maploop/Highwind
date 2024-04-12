@@ -131,6 +131,12 @@
     <ClInclude Include="Light.h">
       <Filter>Engine\Core\Components</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowMapFBO.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalCache.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\vertex_core.glsl">

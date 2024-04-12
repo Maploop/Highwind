@@ -16,7 +16,7 @@ int main()
 	// HNetworkingAgent communicationAgent;
 	// communicationAgent.start();
 
-	while (!game.getWindowShouldClose()) 
+	while (!game.get_window_should_close()) 
 	{
 		game.update();
 		game.render();

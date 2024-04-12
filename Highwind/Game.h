@@ -34,19 +34,19 @@ public:
 	virtual ~Game();
 
 	//Accessors
-	int getWindowShouldClose();
+	int get_window_should_close();
 
 	//Modifiers
-	void setWindowShouldClose();
+	void set_window_should_close();
 
 	//Functions
-	void updateDelta();
-	void updateKeyboardInput();
-	void updateMouseInput();
-	void updateInput();
+	void update_delta();
+	void update_keyboard_input();
+	void update_mouse_input();
+	void update_input();
 	void update();
-	void imGuiUpdate();
-	void imGuiRender();
+	void imgui_update();
+	void imgui_render();
 	void render();
 	void shutdown();
 
@@ -61,6 +61,7 @@ private:
 	const int WINDOW_HEIGHT;
 	int frameBufferWidth;
 	int frameBufferHeight;
+	ShadowMapFBO m_shadow_map_fbo;
 	
 	const int GL_VER_MAJOR;
 	const int GL_VER_MINOR;
@@ -94,28 +95,31 @@ private:
 	std::vector<Material*> materials;
 	std::vector<Mesh*> meshes;
 	std::vector<glm::vec3*> lights;
-	std::vector<PointLight*> pointLights;
+	std::vector<PointLight*> point_lights;
 	std::vector<Model*> models;
 
+	void shadow_map_pass();
+	void lighting_pass();
+
 	// Private functions
-	void initImgui();
-	void initGlfw();
-	void initWindow();
-	void initGlew();
-	void initOpenGLOptions();
-	void initMatrices();
-	void initShaders();
-	void initTextures();
-	void initMaterials();
-	void initOBJModels();
-	void initModels();
-	void initPointLights();
-	void initLights();
-	void initUniforms();
+	void initialize_imgui();
+	void initialize_glfw();
+	void initialize_window();
+	void initialize_glew();
+	void initialize_opengl_options();
+	void initialize_matrices();
+	void initialize_shaders();
+	void initialize_textures();
+	void initialize_materials();
+	void initialize_obj_models();
+	void initialize_models();
+	void initialize_point_lights();
+	void initialize_lights();
+	void initialize_uniforms();
 
-	void updateUniforms();
+	void update_uniforms();
 
-	bool isKeyPressed(GLenum key);
+	bool is_key_pressed(GLenum key);
 
 	// Static variables
 };

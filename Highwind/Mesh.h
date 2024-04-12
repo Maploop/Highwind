@@ -31,8 +31,8 @@ public:
 			this->indexArray[i] = indices[i];
 		}
 
-		this->initVAO();
-		this->updateModelMatrix();
+		this->init_vao();
+		this->update_model_matrix();
 	}
 
 	Mesh(
@@ -57,8 +57,8 @@ public:
 			this->indexArray[i] = prim->get_indices()[i];
 		}
 
-		this->initVAO();
-		this->updateModelMatrix();
+		this->init_vao();
+		this->update_model_matrix();
 	}
 
 	Mesh(const Mesh& obj) {
@@ -77,8 +77,8 @@ public:
 			this->indexArray[i] = obj.indexArray[i];
 		}
 
-		this->initVAO();
-		this->updateModelMatrix();
+		this->init_vao();
+		this->update_model_matrix();
 	}
 
 	~Mesh() {
@@ -98,7 +98,7 @@ public:
 
 	void render(Shader* shader) {
 		// Update uniforms
-		this->updateModelMatrix();
+		this->update_model_matrix();
 		this->update_uniforms(shader);
 		shader->use();
 
@@ -132,15 +132,15 @@ public:
 	// Accessors
 
 	// Modifiers
-	void setPosition(const glm::vec3 pos) {
+	void set_position(const glm::vec3 pos) {
 		m_position = pos;
 	}
 
-	void setRotation(const glm::vec3 rot) {
+	void set_rotation(const glm::vec3 rot) {
 		m_rotation = rot;
 	}
 
-	void setScale(const glm::vec3 scale) {
+	void set_scale(const glm::vec3 scale) {
 		m_scale = scale;
 	}
 private:
@@ -158,7 +158,7 @@ private:
 
 	glm::mat4 m_modelMatrix;
 
-	void initVAO() {
+	void init_vao() {
 		// create vao
 		glCreateVertexArrays(1, &m_VAO);
 		glBindVertexArray(m_VAO);
@@ -190,7 +190,7 @@ private:
 		glBindVertexArray(0);
 	}
 
-	void updateModelMatrix() {
+	void update_model_matrix() {
 		m_modelMatrix = glm::mat4(1.0f);
 		m_modelMatrix = glm::translate(m_modelMatrix, m_position);
 		m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -200,6 +200,6 @@ private:
 	}
 
 	void update_uniforms(Shader* shader) {
-		shader->setMat4fv("modelMatrix", m_modelMatrix);
+		shader->set_mat4fv("modelMatrix", m_modelMatrix);
 	}
 };

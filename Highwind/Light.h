@@ -74,12 +74,12 @@ public:
 			child->setPosition(position);
 		}
 
-		program.setVec3f("pointLight[0].position", position);
-		program.set1f("pointLight[0].intensity", intensity);
-		program.setVec3f("pointLight[0].color", color);
-		program.set1f("pointLight[0].constant", constant);
-		program.set1f("pointLight[0].linear", linear);
-		program.set1f("pointLight[0].quadratic", quadratic);
-		program.set1f("pointLight[0].blinn", blinn);
+		program.set_vec3f("pointLight[0].position", position);
+		program.set_1f("pointLight[0].intensity", intensity);
+		program.set_vec3f("pointLight[0].color", color);
+		program.set_1f("pointLight[0].constant", constant);
+		program.set_1f("pointLight[0].linear", linear);
+		program.set_1f("pointLight[0].quadratic", quadratic);
+		program.set_1f("pointLight[0].blinn", blinn);
 	}
 };

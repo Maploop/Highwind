@@ -45,43 +45,43 @@ public:
 		glUseProgram(0);
 	}
 
-	void set1i(const char* varName, GLint value) {
+	void set_1i(const char* varName, GLint value) {
 		this->use();
 		glUniform1i(glGetUniformLocation(this->m_id, varName), value);
 		this->unuse();
 	}
 
-	void setMat3fv(const char* varName, glm::mat3 value, GLboolean transpose = GL_FALSE) {
+	void set_mat3fv(const char* varName, glm::mat3 value, GLboolean transpose = GL_FALSE) {
 		this->use();
 		glUniformMatrix3fv(glGetUniformLocation(this->m_id, varName), 1, transpose, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void setMat4fv(const char* varName, glm::mat4 value, GLboolean transpose = GL_FALSE) {
+	void set_mat4fv(const char* varName, glm::mat4 value, GLboolean transpose = GL_FALSE) {
 		this->use();
 		glUniformMatrix4fv(glGetUniformLocation(this->m_id, varName), 1, transpose, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void setVec4f(const char* varName, glm::fvec4 value) {
+	void set_vec4f(const char* varName, glm::fvec4 value) {
 		this->use();
 		glUniform4fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void setVec3f(const char* varName, glm::fvec3 value) {
+	void set_vec3f(const char* varName, glm::fvec3 value) {
 		this->use();
 		glUniform3fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void setVec2f(const char* varName, glm::fvec2 value) {
+	void set_vec2f(const char* varName, glm::fvec2 value) {
 		this->use();
 		glUniform2fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set1f(const char* varName, GLfloat value) {
+	void set_1f(const char* varName, GLfloat value) {
 		this->use();
 		glUniform1f(glGetUniformLocation(this->m_id, varName), value);
 		this->unuse();
