@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <map>
 
 #include <gl/glew.h>
 #include <GLFW/glfw3.h>
@@ -18,7 +19,15 @@
 #include "Vertex.h"
 #include "logger.hpp"
 
+static std::map<const char*, std::vector<Vertex>> cached_data;
+
 static std::vector<Vertex> load_from_obj(const char* file_name) {
+	if (cached_data.count(file_name))
+	{
+		FINFO("Sent another '%s' from cache", file_name);
+		return cached_data[file_name];
+	}
+
 	// portions
 	std::vector<glm::fvec3> positions;
 	std::vector<glm::fvec2> texcoords;
@@ -105,9 +114,8 @@ static std::vector<Vertex> load_from_obj(const char* file_name) {
 		vertices[i].normal = normals[normal_indices[i] - 1];
 		vertices[i].color = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
-
-	FDEBUG("Loading a file with %i vertices.", vertices.size());
 	FINFO("Successfully loaded model '%s'", file_name);
 
+	cached_data.insert({file_name, vertices});
 	return vertices;
 }

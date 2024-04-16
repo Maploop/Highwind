@@ -20,10 +20,10 @@ public:
 
 	void render(Shader* shader)
 	{
-		this->renderAllChildren(shader);
+		this->render_children(shader);
 	}
 
-	virtual void sendToShader(Shader& program) = 0;
+	virtual void send_to_shader(Shader& program) = 0;
 };
 
 class PointLight : public Light 
@@ -48,30 +48,30 @@ public:
 
 	}
 
-	void setPosition(const glm::vec3 pos) 
+	void set_position(const glm::vec3 pos) 
 	{
 		this->position = pos;
-		for (auto& child : getChildren())
+		for (auto& child : get_children())
 		{
-			child->setPosition(pos);
+			child->set_position(pos);
 		}
 	}
 
-	void onChildAdded(Component* child)
+	void on_child_added(Component* child)
 	{
-		child->setPosition(this->position);
+		child->set_position(this->position);
 	}
 
-	void setBlinn(bool blinn)
+	void set_blinn(bool blinn)
 	{
 		this->blinn = blinn;
 	}
 
-	void sendToShader(Shader& program) 
+	void send_to_shader(Shader& program) 
 	{
-		for (auto& child : getChildren())
+		for (auto& child : get_children())
 		{
-			child->setPosition(position);
+			child->set_position(position);
 		}
 
 		program.set_vec3f("pointLight[0].position", position);

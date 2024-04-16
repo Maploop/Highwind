@@ -22,13 +22,13 @@ Game::Game(const char* title, const int width, const int height, int GLmajorVer,
 	this->curTime = 0.0f;
 	this->lastTime = 0.0f;
 
-	this->lastMouseX = 0.0f;
-	this->lastMouseY = 0.0f;
-	this->mouseX = 0.0f;
-	this->mouseY = 0.0f;
-	this->mouseOffsetX = 0.0f;
-	this->mouseOffsetY = 0.0f;
-	this->firstMouse = true;
+	this->last_mouse_x = 0.0f;
+	this->last_mouse_y = 0.0f;
+	this->mouse_x = 0.0f;
+	this->mouse_y = 0.0f;
+	this->mouse_offset_x = 0.0f;
+	this->mouse_offset_y = 0.0f;
+	this->first_mouse = true;
 
 	this->initialize_glfw();
 	this->initialize_window();
@@ -79,6 +79,7 @@ void Game::update_keyboard_input()
 	if (is_key_pressed(GLFW_KEY_D)) this->camera.move(this->dt, RIGHT);
 	if (is_key_pressed(GLFW_KEY_SPACE)) this->camera.move(this->dt, UP);
 	if (is_key_pressed(GLFW_KEY_LEFT_CONTROL)) this->camera.move(this->dt, DOWN);
+	//if (glfwGetKey(this->window, GLFW_KEY_LEFT_SHIFT)) this->camera.boost_speed();
 
 	if (is_key_pressed(GLFW_KEY_ESCAPE)) 
 	{
@@ -93,20 +94,20 @@ static void backToGame(GLFWwindow* win)
 
 void Game::update_mouse_input() 
 {
-	glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
+	glfwGetCursorPos(this->window, &this->mouse_x, &this->mouse_y);
 
-	if (this->firstMouse) 
+	if (this->first_mouse) 
 	{
-		this->lastMouseX = mouseX;
-		this->lastMouseY = mouseY;
-		this->firstMouse = false;
+		this->last_mouse_x = mouse_x;
+		this->last_mouse_y = mouse_y;
+		this->first_mouse = false;
 	}
 
-	this->mouseOffsetX = this->mouseX - this->lastMouseX;
-	this->mouseOffsetY = this->mouseY - this->lastMouseY;
+	this->mouse_offset_x = this->mouse_x - this->last_mouse_x;
+	this->mouse_offset_y = this->mouse_y - this->last_mouse_y;
 
-	this->lastMouseX = this->mouseX;
-	this->lastMouseY = this->mouseY;
+	this->last_mouse_x = this->mouse_x;
+	this->last_mouse_y = this->mouse_y;
 }
 
 void Game::update_input() 
@@ -122,7 +123,7 @@ void Game::update()
 {
 	this->update_delta();
 	this->update_input();
-	this->camera.update_input(this->dt, -1, this->mouseOffsetX, this->mouseOffsetY);
+	this->camera.update_input(this->dt, -1, this->mouse_offset_x, this->mouse_offset_y);
 }
 
 void Game::imgui_update()
@@ -167,7 +168,7 @@ void Game::imgui_render()
 
 void Game::render() 
 {
-	shadow_map_pass();
+	// shadow_map_pass();
 	lighting_pass();
 }
 
@@ -235,7 +236,7 @@ void Game::initialize_imgui()
 	ImGui::CreateContext();
 	
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 }
@@ -353,6 +354,13 @@ void Game::initialize_obj_models()
 
 	// meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 
+	//this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
+	//	this->materials[MATERIAL_DEFAULT],
+	//	this->textures[TEXTURE_CONTAINER],
+	//	this->textures[TEXTURE_CONTAINER],
+	//	"resources/3d/test_max.obj"
+	//));
+
 	this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
 		this->materials[MATERIAL_DEFAULT],
 		this->textures[TEXTURE_LIGHTBULB],
@@ -419,7 +427,7 @@ void Game::initialize_point_lights()
 	model->scale(0.5f);
 	model->rotate(glm::vec3(-180, 0, 0));
 
-	pl->addChild(model);
+	pl->add_child(model);
 
 	this->point_lights.push_back(pl);
 }
@@ -440,7 +448,7 @@ void Game::initialize_uniforms()
 
 	for (auto& pl : this->point_lights) 
 	{
-		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+		pl->send_to_shader(*this->shaders[SHADER_CORE_PROGRAM]);
 	}
 	// this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
 }
@@ -459,7 +467,7 @@ void Game::update_uniforms()
 	this->shaders[SHADER_CORE_PROGRAM]->set_1f("useShadows", render_shadows);
 	for (auto& pl : this->point_lights) 
 	{
-		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+		pl->send_to_shader(*this->shaders[SHADER_CORE_PROGRAM]);
 	}
 	//this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
 

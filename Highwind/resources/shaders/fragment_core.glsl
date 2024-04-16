@@ -49,7 +49,7 @@ vec3 calc_ambient(Material material) {
 }
 
 vec3 calc_diffuse(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPos0) {
-	vec3 posToLightDirVec = normalize(vs_position - lightPos0);
+	vec3 posToLightDirVec = normalize(lightPos0 - vs_position);
 	float diffuse = clamp(dot(posToLightDirVec, normalize(vs_normal)), 0, 1);
 	vec3 diffuseFinal = material.diffuse * diffuse;
 	return diffuseFinal;

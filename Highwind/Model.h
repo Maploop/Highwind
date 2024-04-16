@@ -35,18 +35,18 @@ public:
 		this->override_texture_diffuse = overrideTexDif;
 		this->override_texture_specular = overrideTexSpec;
 
-		if (CacheHolder::is_mesh_cached(obj_file))
+		std::vector<Vertex> meshdata;
+		try 
 		{
-			this->meshes.push_back(CacheHolder::find_cached_mesh(obj_file));
-			FINFO("Loading cached mesh");
+			meshdata = load_from_obj(obj_file);
 		}
-		else
+		catch (std::exception ex)
 		{
-			std::vector<Vertex> meshdata = load_from_obj(obj_file);
-			Mesh* mesh = new Mesh(meshdata.data(), meshdata.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-			CacheHolder::cache_mesh_data(obj_file, mesh);
-			this->meshes.push_back(mesh);
+			FERROR("Complete failure to load a model, will be returning an empty array. (%s)", obj_file);
 		}
+
+
+		this->meshes.push_back(new Mesh(meshdata.data(), meshdata.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
 		
 
 		for (auto& i : this->meshes) {

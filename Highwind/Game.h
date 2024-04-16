@@ -70,13 +70,13 @@ private:
 	float curTime;
 	float lastTime;
 	
-	double lastMouseX;
-	double lastMouseY;
-	double mouseX;
-	double mouseY;
-	double mouseOffsetX;
-	double mouseOffsetY;
-	bool firstMouse;
+	double last_mouse_x;
+	double last_mouse_y;
+	double mouse_x;
+	double mouse_y;
+	double mouse_offset_x;
+	double mouse_offset_y;
+	bool first_mouse;
 
 	Camera camera;
 
