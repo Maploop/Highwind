@@ -7,7 +7,7 @@ struct Material {
 
 	sampler2D diffuseTex;
 	sampler2D specularTex;
-	sampler2D depthMap;
+	samplerCube depthMap;
 };
 
 struct PointLight {
@@ -79,48 +79,47 @@ vec3 calc_specular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lig
 	return specularFinal;
 }
 
-float calculateShadows(vec4 fragPosLightSpace)
+float calculateShadows(vec3 fragPos, vec3 lightPos)
 {
-	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
-	float closestDepth = texture(material.depthMap, projCoords.xy).r;
-	float currentDepth = projCoords.z;
-	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
-	return shadow;
-	// vec3 fragToLight = fragPos - lightPos;
-	// float currentDepth = length(fragToLight);
-
-	// float shadow = 0.0;
-    // float bias = 0.15;
-    // int samples = 20;
-    // float viewDistance = length(cameraPos - fragPos);
-    // float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
-    // for(int i = 0; i < samples; ++i)
-    // {
-    //     float closestDepth = texture(material.depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-    //     closestDepth *= far_plane;   // undo mapping [0;1]
-    //     if(currentDepth - bias > closestDepth)
-    //         shadow += 1.0;
-    // }
-    // shadow /= float(samples);
-	
+	// vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	// projCoords = projCoords * 0.5 + 0.5;
+	// float closestDepth = texture(material.depthMap, projCoords.xy).r;
+	// float currentDepth = projCoords.z;
+	// float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
 	// return shadow;
+	vec3 fragToLight = fragPos - lightPos;
+	float currentDepth = length(fragToLight);
+
+	float shadow = 0.0;
+	float bias = 0.15;
+	int samples = 20;
+	float viewDistance = length(cameraPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
+	for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(material.depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= far_plane;  
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+	return shadow;
 }
 
 void main() {
 	vec3 ambientFinal;
 	vec3 diffuseLight;
 	vec3 specularLight;
-	float shadow;
 	
 	for (int i = 0; i < 10; i++) {
 		vec3 ambientLight = calc_ambient(material);
-		vec3 diffuseFinal = calc_diffuse(material, vs_position, vs_normal, pointLight[i].position);
+		vec3 diffuseFinal = calc_diffuse(material, vs_position, vs_normal, pointLight[i].position) * pointLight[i].color;
 		vec3 specularFinal = calc_specular(material, vs_position, vs_normal, pointLight[i].position, cameraPos, pointLight[i].blinn);
 		
 		float distance1 = length(pointLight[i].position - vs_position);
 		float attenuatoion = pointLight[i].constant / (1.0f + pointLight[i].linear * distance1 + pointLight[i].quadratic * (distance1 * distance1));
-		float s = useShadows ? calculateShadows(vs_out.FragPosLightSpace) : 0.0;
+		float s = useShadows ? calculateShadows(vs_position, pointLight[i].position) : 0.0;
+		ambientLight += (1.0 - s);
 		
 		ambientLight *= attenuatoion;
 		diffuseFinal *= attenuatoion;
@@ -129,12 +128,11 @@ void main() {
 		ambientFinal += ambientLight;
 		diffuseLight += diffuseFinal;
 		specularLight += specularFinal;
-		shadow += s;
 	}
 	
 	vec3 color = texture(material.diffuseTex, vs_texcoord).rgb;
 	// vec3 lighting = (ambientFinal + (diffuseLight + specularLight)) * color;
-	vec3 lighting = (ambientFinal + (1.0 - shadow)) * (diffuseLight + specularLight) * color;
+	vec3 lighting = (ambientFinal) * (diffuseLight + specularLight) * color;
 
 	fs_color = vec4(lighting, 1.0);
 	// fs_color = 

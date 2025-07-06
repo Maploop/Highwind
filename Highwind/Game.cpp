@@ -368,13 +368,12 @@ void Game::initialize_point_lights()
 	model->scale(0.5f);
 	model->rotate(glm::vec3(-180, 0, 0));
 
-	pl->add_child(model);
+	// pl->add_child(model);
 	ShadowMapHandler shadowMapHandler(
 		"resources/shaders/shadow_map_vertex.glsl", 
 		"resources/shaders/shadow_map_fragment.glsl",
 		"resources/shaders/shadow_map_geometry.glsl");
 	shadowMapHandler.initialize(pl->position);
-	
 	shadow_maps.push_back(&shadowMapHandler);
 
 	this->point_lights.push_back(pl);

@@ -33,9 +33,11 @@ public:
 	~Material() { }
 
 	void send_to_shader(Shader& shader) {
+		shader.use();
 		shader.set_vec3f("material.ambient", this->ambient);
 		shader.set_vec3f("material.diffuse", this->diffuse);
 		shader.set_vec3f("material.specular", this->specular);
+		shader.set_1i("material.depthMap", this->depthCubemap);
 		shader.set_1i("material.diffuseTex", this->diffuseTex);
 		shader.set_1i("material.specularTex", this->specularTex);
 	}

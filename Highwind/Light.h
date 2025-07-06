@@ -6,9 +6,9 @@ class Light : public Component
 {
 protected:
 	float intensity;
-	glm::vec3 color;
-
+	
 public:
+	glm::vec3 color;
 	Light(float intensity, glm::vec3 color) : intensity(intensity), color(color) 
 	{
 
@@ -21,6 +21,11 @@ public:
 	void render(Shader* shader)
 	{
 		this->render_children(shader);
+	}
+
+	void set_color(glm::vec3 c) 
+	{
+		this->color = color;
 	}
 
 	virtual void send_to_shader(Shader& program) = 0;

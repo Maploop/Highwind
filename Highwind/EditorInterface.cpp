@@ -31,6 +31,7 @@ void EditorInterface::render() {
 		ImGui::Text("Transform ->");
 		ImGui::DragFloat3("Light Position", (float*)&pl->position, 0.2f);
 		ImGui::Text("Point Light ->");
+		ImGui::DragFloat3("Light Color", (float*)&pl->color, 0.2f);
 		ImGui::SliderFloat("Constant", &pl->constant, 0.0f, 100.0f);
 		ImGui::SliderFloat("Linear", &pl->linear, 0.0f, 100.0f);
 		ImGui::SliderFloat("Quadratic", &pl->quadratic, 0.0f, 100.0f);
