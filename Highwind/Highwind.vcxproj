@@ -157,8 +157,10 @@
     <ClCompile Include="..\libraries\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="..\libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="EditorInterface.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShadowMapHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libraries\imgui\imconfig.h" />
@@ -173,8 +175,10 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="defines.h" />
+    <ClInclude Include="EditorInterface.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GlobalCache.h" />
+    <ClInclude Include="GraphicsOptions.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="logger.hpp" />
     <ClInclude Include="Material.h" />
@@ -184,6 +188,7 @@
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapFBO.h" />
+    <ClInclude Include="ShadowMapHandler.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
@@ -193,6 +198,8 @@
     <None Include="resources\shaders\depth_vertex.glsl" />
     <None Include="resources\shaders\fragment_core.glsl" />
     <None Include="resources\shaders\vertex_core.glsl" />
+    <None Include="shadow_map_fragment.glsl" />
+    <None Include="shadow_map_vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

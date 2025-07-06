@@ -42,7 +42,7 @@ public:
 		}
 		catch (std::exception ex)
 		{
-			FERROR("Complete failure to load a model, will be returning an empty array. (%s)", obj_file);
+			FERROR("Models > Complete failure to load a model, will be returning an empty array. (%s)", obj_file);
 		}
 
 
@@ -112,6 +112,11 @@ public:
 
 			i->render(shader);
 		}
+	}
+
+	void send_model_only(Shader* shader) {
+		for (auto& i : this->meshes)
+			i->render(shader);
 	}
 
 	void move(glm::vec3 pos)

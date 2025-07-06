@@ -13,7 +13,7 @@ class Texture {
 public:
 	Texture(const char* path, GLenum type) {
 		m_type = type;
-		FINFO("Loading texture %s", path);
+		FINFO("Textures > Loading \"%s\"", path);
 		unsigned char* image = SOIL_load_image(path, &m_width, &m_height, NULL, SOIL_LOAD_RGBA);
 		glGenTextures(1, &m_id);
 		glBindTexture(type, m_id);
@@ -28,7 +28,7 @@ public:
 			glGenerateMipmap(type);
 		}
 		else {
-			FERROR("Error while loading texture %s", path);
+			FERROR("Textures > Error while loading texture \"%s\"", path);
 		}
 
 		glActiveTexture(0);
@@ -61,7 +61,7 @@ private:
 			glDeleteTextures(1, &m_id);
 		}
 
-		FINFO("Loading texture %s", path);
+		FINFO("Textures > Loading \"%s\"", path);
 		unsigned char* image = SOIL_load_image(path, &m_width, &m_height, NULL, SOIL_LOAD_RGBA);
 		glGenTextures(1, &m_id);
 		glBindTexture(m_type, m_id);
@@ -76,7 +76,7 @@ private:
 			glGenerateMipmap(m_type);
 		}
 		else {
-			FERROR("Error while loading texture %s", path);
+			FERROR("Textures > Error: didn't load \"%s\"", path);
 		}
 
 		glActiveTexture(0);

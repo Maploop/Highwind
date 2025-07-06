@@ -24,7 +24,6 @@ static std::map<const char*, std::vector<Vertex>> cached_data;
 static std::vector<Vertex> load_from_obj(const char* file_name) {
 	if (cached_data.count(file_name))
 	{
-		FINFO("Sent another '%s' from cache", file_name);
 		return cached_data[file_name];
 	}
 
@@ -48,7 +47,7 @@ static std::vector<Vertex> load_from_obj(const char* file_name) {
 	GLint temp_glint = 0;
 
 	if (!in_file.is_open()) {
-		FERROR("Error: OBJLoader -> Could not open file '%s'", file_name);
+		FERROR("Models > Error: OBJLoader -> Could not open file \"%s\"", file_name);
 	}
 
 	while (std::getline(in_file, line)) {
@@ -114,7 +113,7 @@ static std::vector<Vertex> load_from_obj(const char* file_name) {
 		vertices[i].normal = normals[normal_indices[i] - 1];
 		vertices[i].color = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
-	FINFO("Successfully loaded model '%s'", file_name);
+	FINFO("Models > Loaded model \"%s\"", file_name);
 
 	cached_data.insert({file_name, vertices});
 	return vertices;

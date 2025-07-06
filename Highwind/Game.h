@@ -45,8 +45,6 @@ public:
 	void update_mouse_input();
 	void update_input();
 	void update();
-	void imgui_update();
-	void imgui_render();
 	void render();
 	void shutdown();
 
@@ -61,7 +59,7 @@ private:
 	const int WINDOW_HEIGHT;
 	int frameBufferWidth;
 	int frameBufferHeight;
-	ShadowMapFBO m_shadow_map_fbo;
+	GLuint m_depthMapFBO;
 	
 	const int GL_VER_MAJOR;
 	const int GL_VER_MINOR;
@@ -79,6 +77,7 @@ private:
 	bool first_mouse;
 
 	Camera camera;
+	EditorInterface editorInterface;
 
 	glm::mat4 viewMatrix;
 	glm::vec3 camPosition;
@@ -97,12 +96,11 @@ private:
 	std::vector<glm::vec3*> lights;
 	std::vector<PointLight*> point_lights;
 	std::vector<Model*> models;
+	std::vector<ShadowMapHandler*> shadow_maps;
 
-	void shadow_map_pass();
 	void lighting_pass();
 
 	// Private functions
-	void initialize_imgui();
 	void initialize_glfw();
 	void initialize_window();
 	void initialize_glew();

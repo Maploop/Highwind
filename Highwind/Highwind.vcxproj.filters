@@ -31,6 +31,12 @@
     <ClCompile Include="..\libraries\imgui\imgui_impl_opengl3.cpp">
       <Filter>Engine\Vendor\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="EditorInterface.cpp">
+      <Filter>Engine\EditorInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapHandler.cpp">
+      <Filter>Engine\Core\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -59,6 +65,12 @@
     </Filter>
     <Filter Include="Engine\Core\Components">
       <UniqueIdentifier>{beb0c829-c4e5-4b9e-9b77-afb5d3daec27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\EditorInterface">
+      <UniqueIdentifier>{791f909f-111d-4bcd-90de-429ffd37897b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core\Graphics">
+      <UniqueIdentifier>{097e1418-b011-4f4d-a45c-d9292798105a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +149,15 @@
     <ClInclude Include="GlobalCache.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="EditorInterface.h">
+      <Filter>Engine\EditorInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapHandler.h">
+      <Filter>Engine\Core\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsOptions.h">
+      <Filter>Engine\Core\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\vertex_core.glsl">
@@ -152,6 +173,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\shaders\depth_geometry.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shadow_map_fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shadow_map_vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

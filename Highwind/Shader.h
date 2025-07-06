@@ -45,45 +45,45 @@ public:
 		glUseProgram(0);
 	}
 
-	void set_1i(const char* varName, GLint value) {
+	void set_1i(std::string varName, GLint value) {
 		this->use();
-		glUniform1i(glGetUniformLocation(this->m_id, varName), value);
+		glUniform1i(glGetUniformLocation(this->m_id, varName.c_str()), value);
 		this->unuse();
 	}
 
-	void set_mat3fv(const char* varName, glm::mat3 value, GLboolean transpose = GL_FALSE) {
+	void set_mat3fv(std::string varName, glm::mat3 value, GLboolean transpose = GL_FALSE) {
 		this->use();
-		glUniformMatrix3fv(glGetUniformLocation(this->m_id, varName), 1, transpose, glm::value_ptr(value));
+		glUniformMatrix3fv(glGetUniformLocation(this->m_id, varName.c_str()), 1, transpose, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set_mat4fv(const char* varName, glm::mat4 value, GLboolean transpose = GL_FALSE) {
+	void set_mat4fv(std::string varName, glm::mat4 value, GLboolean transpose = GL_FALSE) {
 		this->use();
-		glUniformMatrix4fv(glGetUniformLocation(this->m_id, varName), 1, transpose, glm::value_ptr(value));
+		glUniformMatrix4fv(glGetUniformLocation(this->m_id, varName.c_str()), 1, transpose, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set_vec4f(const char* varName, glm::fvec4 value) {
+	void set_vec4f(std::string varName, glm::fvec4 value) {
 		this->use();
-		glUniform4fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
+		glUniform4fv(glGetUniformLocation(this->m_id, varName.c_str()), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set_vec3f(const char* varName, glm::fvec3 value) {
+	void set_vec3f(std::string varName, glm::fvec3 value) {
 		this->use();
-		glUniform3fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
+		glUniform3fv(glGetUniformLocation(this->m_id, varName.c_str()), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set_vec2f(const char* varName, glm::fvec2 value) {
+	void set_vec2f(std::string varName, glm::fvec2 value) {
 		this->use();
-		glUniform2fv(glGetUniformLocation(this->m_id, varName), 1, glm::value_ptr(value));
+		glUniform2fv(glGetUniformLocation(this->m_id, varName.c_str()), 1, glm::value_ptr(value));
 		this->unuse();
 	}
 
-	void set_1f(const char* varName, GLfloat value) {
+	void set_1f(std::string varName, GLfloat value) {
 		this->use();
-		glUniform1f(glGetUniformLocation(this->m_id, varName), value);
+		glUniform1f(glGetUniformLocation(this->m_id, varName.c_str()), value);
 		this->unuse();
 	}
 private:
@@ -102,7 +102,7 @@ private:
 				src += temp + "\n";
 		}
 		else {
-			FERROR("Shader Error: Could not open file: %s", filePath);
+			FERROR("Shader > Error: Could not open file: \"%s\"", filePath);
 		}
 
 		in_file.close();
@@ -110,7 +110,6 @@ private:
 		std::string versionNr = std::to_string(m_versionMajor) + std::to_string(m_versionMinor) + "0";
 		src.replace(src.find("#version"), 12, ("#version " + versionNr));
 
-		FINFO("Loaded shader source %s", filePath);
 		return src;
 	}
 
@@ -128,11 +127,11 @@ private:
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(shader, 512, NULL, infoLog);
-			FERROR("Shader Error: Could not compile shader: %s", filePath);
+			FERROR("Shader > Error: Could not compile shader: \"%s\"", filePath);
 			FERROR(infoLog);
 		}
 		else
-			FINFO("Successfully compiled %s shader", filePath);
+			FINFO("Shader > Compiled \"%s\"", filePath);
 
 		return shader;
 	}
@@ -156,8 +155,6 @@ private:
 			FERROR("Failed to link shader program! Stacktrace:");
 			FERROR(infoLog);
 		}
-		else
-			FINFO("Successfully linked shader programs!");
 
 		glUseProgram(0);
 	}

@@ -16,11 +16,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <map>
-#include "ShadowMapFBO.h";
 
 #include "Model.h"
 #include "Light.h"
 #include "Component.h"
+#include "EditorInterface.h"
+#include "ShadowMapHandler.h"
+#include "GraphicsOptions.h"
 
 #define g_int32 GLint
 #define g_uint32 GLuint

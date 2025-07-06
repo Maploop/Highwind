@@ -3,7 +3,7 @@
 Game::Game(const char* title, const int width, const int height, int GLmajorVer, int GLminorVer, bool resizable)
 	: m_windowTitle(title), m_windowResizable(resizable),
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VER_MAJOR(GLmajorVer), GL_VER_MINOR(GLminorVer),
-	camera(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)) 
+	camera(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 {
 
 	this->window = nullptr;
@@ -34,7 +34,7 @@ Game::Game(const char* title, const int width, const int height, int GLmajorVer,
 	this->initialize_window();
 	this->initialize_glew();
 	this->initialize_opengl_options();
-	this->initialize_imgui();
+	this->editorInterface.initialize(this->window);
 
 	this->initialize_matrices();
 	this->initialize_shaders();
@@ -126,49 +126,16 @@ void Game::update()
 	this->camera.update_input(this->dt, -1, this->mouse_offset_x, this->mouse_offset_y);
 }
 
-void Game::imgui_update()
-{
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-}
 
-bool render_shadows = true;
-
-void Game::imgui_render()
-{
-	ImGui::Begin("Local PL");
-	ImGui::Text("Transform ->");
-	ImGui::DragFloat3("Light Position", (float*) & point_lights[0]->position, 0.2f);
-	ImGui::Text("Point Light ->");
-	ImGui::SliderFloat("Constant", &point_lights[0]->constant, 0.0f, 100.0f);
-	ImGui::SliderFloat("Linear", &point_lights[0]->linear, 0.0f, 100.0f);
-	ImGui::SliderFloat("Quadratic", &point_lights[0]->quadratic, 0.0f, 100.0f);
-	ImGui::Checkbox("Blinn Phong", &point_lights[0]->blinn);
-	ImGui::End();
-
-	ImGui::Begin("Engine & Rendering Options");
-	
-	if (ImGui::Button("Compile & Run"))
-	{
-		FINFO("Compiling changes and running the game...");
-		backToGame(this->window);
-	}
-	if (ImGui::Button("Exit"))
-	{
-		FINFO("Exiting...");
-		set_window_should_close();
-	}
-	ImGui::Checkbox("Shadows", &render_shadows);
-	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
 
 void Game::render() 
 {
-	// shadow_map_pass();
+
+	for (ShadowMapHandler* smh : shadow_maps) {
+		smh->pre_render();
+		smh->render(this->meshes, this->camera);
+	}
+
 	lighting_pass();
 }
 
@@ -192,20 +159,14 @@ void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)
 	glViewport(0, 0, fbW, fbH);
 }
 
-void Game::shadow_map_pass()
-{
-	m_shadow_map_fbo.bind_for_writing();
-	glClear(GL_DEPTH_BUFFER_BIT);
-	
-	
-}
-
 void Game::lighting_pass()
 {
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	this->imgui_update();
+	this->editorInterface.update();
 
 	// Update uniforms
 	this->update_uniforms();
@@ -218,7 +179,7 @@ void Game::lighting_pass()
 		plLightModel->render(this->shaders[SHADER_CORE_PROGRAM]);
 	}
 
-	this->imgui_render();
+	this->editorInterface.render();
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -229,23 +190,11 @@ void Game::lighting_pass()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Game::initialize_imgui()
-{
-	FINFO("Initializing ImGUI...");
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsClassic();
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
-}
-
 void Game::initialize_glfw() {
-	FINFO("Initializing GLFW...");
+	FINFO("Manager > Initializing GLFW...");
 	if (glfwInit() == GLFW_FALSE) 
 	{
-		FFATAL("GLFW initialization failed!");
+		FFATAL("Manager > Error: GLFW initialization failed!");
 		this->shutdown();
 	}
 }
@@ -253,7 +202,7 @@ void Game::initialize_glfw() {
 void Game::initialize_window()
 {
 
-	FINFO("Creating a window with OpenGL version %i.%i", GL_VER_MAJOR, GL_VER_MINOR);
+	FINFO("Manager > Creating a window with OpenGL version %i.%i", GL_VER_MAJOR, GL_VER_MINOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VER_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VER_MINOR);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -269,7 +218,7 @@ void Game::initialize_window()
 	glfwMakeContextCurrent(this->window);
 	if (this->window == nullptr) 
 	{
-		FFATAL("OpenGL has failed to create the window.");
+		FFATAL("Manager > Error: OpenGL has failed to create the window.");
 		this->shutdown();
 	}
 }
@@ -279,7 +228,7 @@ void Game::initialize_glew()
 	glewExperimental = TRUE;
 	if (glewInit() != GLEW_OK) 
 	{
-		FFATAL("Engine was unable to initialize GLEW32!");
+		FFATAL("Manager > Error: Engine was unable to initialize GLEW32!");
 		this->shutdown();
 	}
 }
@@ -294,13 +243,14 @@ void Game::initialize_opengl_options()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#ifdef MODE_WIREFRAME
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	FINFO("Wireframe mode enabled!");
-#else
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	FINFO("Wireframe mode is disabled.");
-#endif
+	if (editorInterface.graphicsOptions.wireframeMode) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		FINFO("Manager > Wireframe mode enabled!");
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		FINFO("Manager > Wireframe mode is disabled.");
+	}
 
 	glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(this->window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -308,7 +258,7 @@ void Game::initialize_opengl_options()
 
 void Game::initialize_matrices() 
 {
-	FINFO("Initializing matrices...");
+	FINFO("Manager > Initializing matrices...");
 	this->viewMatrix = glm::mat4(1.0f);
 	this->viewMatrix = camera.get_view_matrix();
 
@@ -321,21 +271,20 @@ void Game::initialize_matrices()
 
 void Game::initialize_shaders() 
 {
-	FINFO("Initializing shaders...");
+	FINFO("Manager > Initializing shaders...");
 	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/vertex_core.glsl", "resources/shaders/fragment_core.glsl"));
 	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/depth_vertex.glsl", "resources/shaders/depth_fragment.glsl", "resources/shaders/depth_geometry.glsl"));
 }
 
 void Game::initialize_textures() 
 {
-	FINFO("Initializing textures...");
+	FINFO("Manager > Initializing textures...");
 	this->textures.push_back(new Texture("resources/textures/container2.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/awesomeface.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/wall.jpg", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/container2_specular.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("resources/textures/wooden_floor.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/skybox.jpg", GL_TEXTURE_2D));
 }
 
 void Game::initialize_materials() 
@@ -348,7 +297,7 @@ void Game::initialize_materials()
 void Game::initialize_obj_models()
 {
 	FINFO("Loading 3D Models...");
-	// std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
+	//std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
 
 	std::vector<Mesh*> meshes;
 
@@ -365,21 +314,21 @@ void Game::initialize_obj_models()
 		this->materials[MATERIAL_DEFAULT],
 		this->textures[TEXTURE_LIGHTBULB],
 		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/monkey.obj"
+		"resources/3d/sphere.obj"
 	));
 
 	this->models.push_back(new Model(glm::vec3(0.0f, 2.0f, 0.0f),
 		this->materials[MATERIAL_DEFAULT],
 		this->textures[TEXTURE_LIGHTBULB],
 		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/monkey.obj"
+		"resources/3d/sphere.obj"
 	));
 
 	this->models.push_back(new Model(glm::vec3(0.0f, 4.0f, 0.0f),
 		this->materials[MATERIAL_DEFAULT],
 		this->textures[TEXTURE_LIGHTBULB],
 		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/monkey.obj"
+		"resources/3d/sphere.obj"
 	));
 
 	auto quadTemp = Quad();
@@ -396,14 +345,6 @@ void Game::initialize_obj_models()
 		this->textures[TEXTURE_WOODEN_FLOOR],
 		meshes
 	));
-
-	Model* skybox = new Model(glm::vec3(0.0f),
-		this->materials[MATERIAL_LIT],
-		this->textures[TEXTURE_SKYBOX],
-		this->textures[TEXTURE_SKYBOX],
-		"resources/3d/sphere.obj");
-	skybox->scale(10);
-	this->models.push_back(skybox);
 
 	for (auto*& i : meshes)
 		delete i;
@@ -428,20 +369,28 @@ void Game::initialize_point_lights()
 	model->rotate(glm::vec3(-180, 0, 0));
 
 	pl->add_child(model);
+	ShadowMapHandler shadowMapHandler(
+		"resources/shaders/shadow_map_vertex.glsl", 
+		"resources/shaders/shadow_map_fragment.glsl",
+		"resources/shaders/shadow_map_geometry.glsl");
+	shadowMapHandler.initialize(pl->position);
+	
+	shadow_maps.push_back(&shadowMapHandler);
 
 	this->point_lights.push_back(pl);
+	this->editorInterface.add_point_light(pl);
 }
 
 void Game::initialize_lights() 
 {
-	FINFO("Initializing lights...");
+	FINFO("Manager > Initializing lights...");
 	initialize_point_lights();
 	this->lights.push_back(new glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void Game::initialize_uniforms() 
 {
-	FINFO("Initializing uniforms...");
+	FINFO("Manager > Initializing uniforms...");
 	this->shaders[SHADER_CORE_PROGRAM]->set_mat4fv("viewMatrix", viewMatrix);
 	this->shaders[SHADER_CORE_PROGRAM]->set_mat4fv("projectionMatrix", projectionMatrix);
 
@@ -464,12 +413,12 @@ void Game::update_uniforms()
 	this->shaders[SHADER_CORE_PROGRAM]->set_mat4fv("viewMatrix", this->viewMatrix);
 	this->shaders[SHADER_CORE_PROGRAM]->set_vec3f("cameraPos", camera.getPosition());
 	this->shaders[SHADER_CORE_PROGRAM]->set_1f("far_plane", camera.get_far_plane());
-	this->shaders[SHADER_CORE_PROGRAM]->set_1f("useShadows", render_shadows);
+	this->shaders[SHADER_CORE_PROGRAM]->set_1f("useShadows", editorInterface.graphicsOptions.castShadows);
 	for (auto& pl : this->point_lights) 
 	{
 		pl->send_to_shader(*this->shaders[SHADER_CORE_PROGRAM]);
 	}
-	//this->shaders[SHADER_CORE_PROGRAM]->setVec3f("lightPos0", *this->lights[0]);
+	// this->shaders[SHADER_CORE_PROGRAM]->set_vec3f("lightPos0", *this->lights[0]);
 
 	this->projectionMatrix = glm::perspective(glm::radians(fov),
 		static_cast<float>(this->frameBufferWidth) / this->frameBufferHeight,
