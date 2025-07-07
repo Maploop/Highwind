@@ -92,6 +92,14 @@ public:
 	{
 		return 70.0f;
 	}
+
+	glm::vec3 get_front() {
+		return front;
+	}
+
+	glm::vec3 get_up() {
+		return up;
+	}
 private:
 	glm::mat4 viewMatrix;
 

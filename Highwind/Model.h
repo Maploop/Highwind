@@ -6,7 +6,7 @@
 #include "GlobalCache.h"
 
 class Model : public Component {
-private:
+protected:
 	Material* material;
 	Texture* override_texture_diffuse;
 	Texture* override_texture_specular;
@@ -18,6 +18,8 @@ private:
 
 	}
 public:
+	Model() = default;
+
 	Model(glm::vec3 position, Material* material, Texture* overrideTexDif, Texture* overrideTexSpec, std::vector<Mesh*> meshes) {
 		this->position = position;
 		this->material = material;

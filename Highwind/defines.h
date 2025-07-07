@@ -23,6 +23,7 @@
 #include "EditorInterface.h"
 #include "ShadowMapHandler.h"
 #include "GraphicsOptions.h"
+#include "SkyBoxHandler.h"
 
 #define g_int32 GLint
 #define g_uint32 GLuint

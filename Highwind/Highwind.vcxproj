@@ -159,6 +159,7 @@
     <ClCompile Include="..\libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="EditorInterface.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GLTFModel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShadowMapHandler.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="EditorInterface.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GlobalCache.h" />
+    <ClInclude Include="GLTFModel.h" />
     <ClInclude Include="GraphicsOptions.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="Light.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapFBO.h" />
     <ClInclude Include="ShadowMapHandler.h" />
+    <ClInclude Include="SkyBoxHandler.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>

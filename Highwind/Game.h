@@ -86,6 +86,7 @@ private:
 
 	Camera camera;
 	EditorInterface editorInterface;
+	SkyBoxManager* skyboxManager;
 
 	glm::mat4 viewMatrix;
 	glm::vec3 camPosition;

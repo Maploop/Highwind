@@ -4,6 +4,17 @@
         "version": "1.0.0",
         "locked": false,
         "data": {
+            "sky": {
+                "night": [
+                    "resources/cubemap/night_sky/right.png",
+                    "resources/cubemap/night_sky/left.png",
+                    "resources/cubemap/night_sky/top.png",
+                    "resources/cubemap/night_sky/bottom.png",
+                    "resources/cubemap/night_sky/front.png",
+                    "resources/cubemap/night_sky/back.png"
+                ],
+                "day": []
+            },
             "shader": {
                 "core": {
                     "vertex": "resources/shaders/vertex_core.glsl",
@@ -21,6 +32,12 @@
                     "vertex": "resources/shaders/shadow_map_vertex.glsl",
                     "fragment": "resources/shaders/shadow_map_fragment.glsl",
                     "geometry": "resources/shaders/shadow_map_geometry.glsl",
+                    "enabled": true
+                },
+                "sky": {
+                    "vertex": "resources/shaders/skybox_vertex.glsl",
+                    "fragment": "resources/shaders/skybox_fragment.glsl",
+                    "geometry": null,
                     "enabled": true
                 }
             },
@@ -75,8 +92,16 @@
                     "objectPath": "resources/3d/sphere.obj",
                     "children": []
                 },
+                "monkey": {
+                    "position": [10.0, 1.0, 1.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 2,
+                    "overrideTextureSpecular": 2,
+                    "objectPath": "resources/3d/sphere.obj",
+                    "children": []
+                },
                 "sphere_2": {
-                    "position": [1.0, 2.0, 1.0],
+                    "position": [1.0, 3.0, 1.0],
                     "materialIndex": 0,
                     "overrideTextureDiffuse": 4,
                     "overrideTextureSpecular": 4,
@@ -84,7 +109,7 @@
                     "children": []
                 },
                 "sphere_3": {
-                    "position": [1.0, 4.0, 1.0],
+                    "position": [1.0, 5.0, 1.0],
                     "materialIndex": 0,
                     "overrideTextureDiffuse": 4,
                     "overrideTextureSpecular": 4,
@@ -122,7 +147,7 @@
                     "position": [0.0, 0.0, 0.0],
                     "blinnPhong": true,
                     "intensity": 1.0,
-                    "color": [2.0, 2.0, 1.0],
+                    "color": [-4.6, 0.4, 0.2],
                     "constant": 2.0,
                     "linear": 0.045,
                     "quadratic": 0.0075,

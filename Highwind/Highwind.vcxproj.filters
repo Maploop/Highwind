@@ -37,6 +37,9 @@
     <ClCompile Include="ShadowMapHandler.cpp">
       <Filter>Engine\Core\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="GLTFModel.cpp">
+      <Filter>Engine\Core\ModelLoaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -72,6 +75,9 @@
     <Filter Include="Engine\Core\Graphics">
       <UniqueIdentifier>{097e1418-b011-4f4d-a45c-d9292798105a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Core\ModelLoaders">
+      <UniqueIdentifier>{4d6e9db0-99d5-4d0e-9499-445c98ae7e95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logger.hpp">
@@ -99,9 +105,6 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="OBJLoader.hpp">
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\libraries\imgui\imconfig.h">
@@ -160,6 +163,15 @@
     </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>Engine\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="OBJLoader.hpp">
+      <Filter>Engine\Core\ModelLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="GLTFModel.h">
+      <Filter>Engine\Core\ModelLoaders</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBoxHandler.h">
+      <Filter>Engine\Core\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

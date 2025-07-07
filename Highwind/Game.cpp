@@ -148,6 +148,7 @@ void Game::render()
 	}
 
 	lighting_pass();
+
 }
 
 void Game::shutdown()
@@ -189,7 +190,9 @@ void Game::lighting_pass()
 	{
 		plLightModel->render(this->shaders[SHADER_CORE_PROGRAM]);
 	}
-
+	// Post process
+	skyboxManager->render(camera, WINDOW_WIDTH, WINDOW_HEIGHT, 70.0f, 0.1f, 100.0f);
+	
 	this->editorInterface.render();
 
 	glfwSwapBuffers(window);
@@ -378,6 +381,14 @@ void Game::initialize_obj_models()
 			this->model_map.insert(std::pair(id, model));
 		}
 	}
+
+	// Skybox Init
+	std::string skyVert = leveldata[CURRENT_LEVEL]["data"]["shader"]["sky"]["vertex"];
+	std::string skyFrag = leveldata[CURRENT_LEVEL]["data"]["shader"]["sky"]["fragment"];
+	std::vector<std::string> cubemapPaths = leveldata[CURRENT_LEVEL]["data"]["sky"]["night"];
+	skyboxManager = new SkyBoxManager(skyVert.c_str(), skyFrag.c_str(), cubemapPaths);
+	skyboxManager->initialize();
+	FINFO("Manager > SkyBox successfully initialized;");
 }
 
 void Game::initialize_models() 
