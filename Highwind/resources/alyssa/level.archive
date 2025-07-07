@@ -1,0 +1,137 @@
+{
+    "debug_level": {
+        "displayName": "Debug Level 1",
+        "version": "1.0.0",
+        "locked": false,
+        "data": {
+            "shader": {
+                "core": {
+                    "vertex": "resources/shaders/vertex_core.glsl",
+                    "fragment": "resources/shaders/fragment_core.glsl",
+                    "geometry": null,
+                    "enabled": true
+                },
+                "depth": {
+                    "vertex": "resources/shaders/depth_vertex.glsl",
+                    "fragment": "resources/shaders/depth_fragment.glsl",
+                    "geometry": "resources/shaders/depth_geometry.glsl",
+                    "enabled": true
+                },
+                "shadowDepth": {
+                    "vertex": "resources/shaders/shadow_map_vertex.glsl",
+                    "fragment": "resources/shaders/shadow_map_fragment.glsl",
+                    "geometry": "resources/shaders/shadow_map_geometry.glsl",
+                    "enabled": true
+                }
+            },
+            "textures": [
+                {
+                    "path": "resources/textures/container2.png",
+                    "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/textures/awesomeface.png",
+                    "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/textures/wall.jpg",
+                    "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/textures/container2_specular.png",
+                    "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/textures/lightbulb.jpg",
+                    "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/textures/wooden_floor.png",
+                    "type": "GL_TEXTURE_2D"
+                }
+            ],
+            "materials": [
+                {
+                    "diffuse": [0.1, 0.1, 0.1],
+                    "specular": [1.0, 1.0, 1.0],
+                    "ambient": [1.0, 1.0, 1.0],
+                    "diffuseTexture": 0,
+                    "specularTexture": 1
+                },
+                {
+                    "diffuse": [0.1, 0.1, 0.1],
+                    "specular": [1.0, 1.0, 1.0],
+                    "ambient": [1.0, 1.0, 1.0],
+                    "diffuseTexture": 0,
+                    "specularTexture": 1
+                }
+            ],
+            "models": {
+                "sphere_1": {
+                    "position": [1.0, 1.0, 1.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 4,
+                    "overrideTextureSpecular": 4,
+                    "objectPath": "resources/3d/sphere.obj",
+                    "children": []
+                },
+                "sphere_2": {
+                    "position": [1.0, 2.0, 1.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 4,
+                    "overrideTextureSpecular": 4,
+                    "objectPath": "resources/3d/sphere.obj",
+                    "children": []
+                },
+                "sphere_3": {
+                    "position": [1.0, 4.0, 1.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 4,
+                    "overrideTextureSpecular": 4,
+                    "objectPath": "resources/3d/sphere.obj",
+                    "children": []
+                },
+                "lightbulb_1": {
+                    "position": [0.0, 4.0, 0.0],
+                    "scale": [0.5, 0.5, 0.5],
+                    "rotation": [-180.0, 0.0, 0.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 4,
+                    "overrideTextureSpecular": 4,
+                    "objectPath": "resources/3d/sphere.obj",
+                    "children": []
+                },
+                "quad":{
+                    "position": [0.0, 0.0, 0.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 5,
+                    "overrideTextureSpecular": 5,
+                    "objectPath": "MESH_BASED",
+                    "meshes": [
+                        {
+                            "type": "QUAD",
+                            "position": [0.0, -3.0, 0.0],
+                            "rotation": [-90.0, 0.0, 0.0],
+                            "scale": [100.0, 100.0, 100.0]
+                        }
+                    ]
+                }
+            },
+            "pointLights": [
+                {
+                    "position": [0.0, 0.0, 0.0],
+                    "blinnPhong": true,
+                    "intensity": 1.0,
+                    "color": [2.0, 2.0, 1.0],
+                    "constant": 2.0,
+                    "linear": 0.045,
+                    "quadratic": 0.0075,
+                    "castShadows": true,
+                    "children": [
+                        "lightbulb_1"
+                    ]
+                }
+            ]
+        }
+    }
+}

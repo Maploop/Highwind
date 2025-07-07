@@ -158,6 +158,9 @@
     <ClInclude Include="GraphicsOptions.h">
       <Filter>Engine\Core\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Engine\Vendor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\vertex_core.glsl">

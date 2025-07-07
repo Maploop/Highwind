@@ -1,10 +1,21 @@
 #include "Game.h"
 
+#include <fstream>
+#include <vector>
+
+const char* CURRENT_LEVEL = "debug_level";
+// TODO: Fix loading models from json
+
 Game::Game(const char* title, const int width, const int height, int GLmajorVer, int GLminorVer, bool resizable)
 	: m_windowTitle(title), m_windowResizable(resizable),
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height), GL_VER_MAJOR(GLmajorVer), GL_VER_MINOR(GLminorVer),
 	camera(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f))
 {
+	FINFO("Loading data from JSON...");
+	std::fstream frdataFile("resources/alyssa/frdata.archive");
+	frdata = json::parse(frdataFile);
+	std::fstream levelFile("resources/alyssa/level.archive");
+	leveldata = json::parse(levelFile);
 
 	this->window = nullptr;
 	this->frameBufferHeight = WINDOW_HEIGHT;
@@ -272,83 +283,101 @@ void Game::initialize_matrices()
 void Game::initialize_shaders() 
 {
 	FINFO("Manager > Initializing shaders...");
-	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/vertex_core.glsl", "resources/shaders/fragment_core.glsl"));
-	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, "resources/shaders/depth_vertex.glsl", "resources/shaders/depth_fragment.glsl", "resources/shaders/depth_geometry.glsl"));
+	std::string coreVert = leveldata[CURRENT_LEVEL]["data"]["shader"]["core"]["vertex"];
+	std::string coreFrag = leveldata[CURRENT_LEVEL]["data"]["shader"]["core"]["fragment"];
+	this->shaders.push_back(new Shader(GL_VER_MAJOR, GL_VER_MINOR, coreVert.c_str(), coreFrag.c_str()));;
 }
 
 void Game::initialize_textures() 
 {
 	FINFO("Manager > Initializing textures...");
-	this->textures.push_back(new Texture("resources/textures/container2.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/awesomeface.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/wall.jpg", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/container2_specular.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/lightbulb.jpg", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("resources/textures/wooden_floor.png", GL_TEXTURE_2D));
+	std::vector<json> vec = leveldata[CURRENT_LEVEL]["data"]["textures"];
+	for (json dataObject : vec) {
+		std::string path = dataObject["path"];
+		this->textures.push_back(new Texture(path.c_str(), GL_TEXTURE_2D));
+	}
 }
 
 void Game::initialize_materials() 
 {
 	FINFO("Initializing materials...");
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(1.0f), 0, 1));
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.0f), glm::vec3(1.0f), 0, 1));
+	std::vector<json> vec = leveldata[CURRENT_LEVEL]["data"]["materials"];
+	for (json dataObject : vec) {
+		glm::vec3 diffuse(dataObject["diffuse"][0], dataObject["diffuse"][1], dataObject["diffuse"][2]);
+		glm::vec3 specular(dataObject["specular"][0], dataObject["specular"][1], dataObject["specular"][2]);
+		glm::vec3 ambient(dataObject["ambient"][0], dataObject["ambient"][1], dataObject["ambient"][2]);
+		int diffuseTex = dataObject["diffuseTexture"];
+		int specularTex = dataObject["specularTexture"];
+
+		this->materials.push_back(new Material(diffuse, specular, ambient, diffuseTex, specularTex));
+	}
 }
 
 void Game::initialize_obj_models()
 {
 	FINFO("Loading 3D Models...");
-	//std::vector<Vertex> mesh = loadObjFile("resources/3d/monkey.obj");
+	json modelsData = leveldata[CURRENT_LEVEL]["data"]["models"];
+	for (auto it = modelsData.begin(); it != modelsData.end(); ++it) {
+		std::string id = it.key();
+		json data = it.value();
 
-	std::vector<Mesh*> meshes;
+		glm::vec3 position(data["position"][0], data["position"][1], data["position"][2]);
+		int materialIndex = data["materialIndex"];
+		int overrideTexDif = data["overrideTextureDiffuse"];
+		int overrideTexSpec = data["overrideTextureSpecular"];
 
-	// meshes.push_back(new Mesh(mesh.data(), mesh.size(), NULL, 0, glm::vec3(1.0, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(1.0f)));
+		std::string objectPath = data["objectPath"];
+		if (objectPath == "MESH_BASED") {
+			std::vector<Mesh*> meshList;
 
-	//this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
-	//	this->materials[MATERIAL_DEFAULT],
-	//	this->textures[TEXTURE_CONTAINER],
-	//	this->textures[TEXTURE_CONTAINER],
-	//	"resources/3d/test_max.obj"
-	//));
+			for (json meshDat : data["meshes"]) {
+				std::string type = meshDat["type"];
 
-	this->models.push_back(new Model(glm::vec3(0.0f, 0.0f, 0.0f),
-		this->materials[MATERIAL_DEFAULT],
-		this->textures[TEXTURE_LIGHTBULB],
-		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/sphere.obj"
-	));
+				if (type == "QUAD") {
+					auto quadTemp = Quad();
+					meshList.push_back(
+						new Mesh(&quadTemp,
+							glm::vec3(meshDat["position"][0], meshDat["position"][1], meshDat["position"][2]),
+							glm::vec3(meshDat["rotation"][0], meshDat["rotation"][1], meshDat["rotation"][2]),
+							glm::vec3(meshDat["scale"][0], meshDat["scale"][1], meshDat["scale"][2])
+						));
+				}
+				// TODO: Add other mesh types and implement an enum to use a switch instead of if statements
+			}
+			Model* model = new Model(position,
+				this->materials[materialIndex],
+				this->textures[overrideTexDif],
+				this->textures[overrideTexSpec],
+				meshList
+			);
+			if (data.contains("rotation"))
+				model->rotate(glm::vec3(data["rotation"][0], data["rotation"][1], data["rotation"][2]));
+			if (data.contains("scale"))
+				model->scale(glm::vec3(data["scale"][0], data["scale"][1], data["scale"][2]));
 
-	this->models.push_back(new Model(glm::vec3(0.0f, 2.0f, 0.0f),
-		this->materials[MATERIAL_DEFAULT],
-		this->textures[TEXTURE_LIGHTBULB],
-		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/sphere.obj"
-	));
+			this->models.push_back(model);
+			this->model_map.insert(std::pair(id, model));
+			
+			for (auto*& i : meshList)
+				delete i;
+			meshList.clear();
+		}
+		else {
+			Model* model = new Model(position,
+				this->materials[materialIndex],
+				this->textures[overrideTexDif],
+				this->textures[overrideTexSpec],
+				objectPath.c_str());
+			
+			if (data.contains("rotation"))
+				model->rotate(glm::vec3(data["rotation"][0], data["rotation"][1], data["rotation"][2]));
+			if (data.contains("scale"))
+				model->scale(glm::vec3(data["scale"][0], data["scale"][1], data["scale"][2]));
 
-	this->models.push_back(new Model(glm::vec3(0.0f, 4.0f, 0.0f),
-		this->materials[MATERIAL_DEFAULT],
-		this->textures[TEXTURE_LIGHTBULB],
-		this->textures[TEXTURE_LIGHTBULB],
-		"resources/3d/sphere.obj"
-	));
-
-	auto quadTemp = Quad();
-	meshes.push_back(
-		new Mesh(&quadTemp,
-			glm::vec3(0.0f, -3.0f, 0.0f),
-			glm::vec3(-90.0f, 0.0f, 0.0f),
-			glm::vec3(100.0f)
-		));
-
-	this->models.push_back(new Model(glm::vec3(0.0f),
-		this->materials[MATERIAL_DEFAULT],
-		this->textures[TEXTURE_WOODEN_FLOOR],
-		this->textures[TEXTURE_WOODEN_FLOOR],
-		meshes
-	));
-
-	for (auto*& i : meshes)
-		delete i;
-	meshes.clear();
+			this->models.push_back(model);
+			this->model_map.insert(std::pair(id, model));
+		}
+	}
 }
 
 void Game::initialize_models() 
@@ -358,6 +387,41 @@ void Game::initialize_models()
 
 void Game::initialize_point_lights()
 {
+	std::string shadowVert = leveldata[CURRENT_LEVEL]["data"]["shader"]["shadowDepth"]["vertex"];
+	std::string shadowFrag = leveldata[CURRENT_LEVEL]["data"]["shader"]["shadowDepth"]["fragment"];
+	std::string shadowGeo = leveldata[CURRENT_LEVEL]["data"]["shader"]["shadowDepth"]["geometry"];
+
+	for (json plData : leveldata[CURRENT_LEVEL]["data"]["pointLights"]) {
+		glm::vec3 position(plData["position"][0], plData["position"][1], plData["position"][2]);
+		bool blinn = plData["blinnPhong"];
+		float intensity = plData["intensity"];
+		glm::vec3 color(plData["color"][0], plData["color"][1], plData["color"][2]);
+		float constant = plData["constant"];
+		float quadratic = plData["quadratic"];
+		float linear = plData["linear"];
+
+		PointLight* pl = new PointLight(position, blinn, intensity, color, constant, linear, quadratic);
+		if (plData.contains("children")) {
+			for (std::string childName : plData["children"]) {
+				pl->add_child(model_map[childName]);
+			}
+		}
+		if (!plData.contains("castShadows")) {
+			FERROR("Missing property in PointLight 'castShadows'!");
+		}
+
+		bool castShadows = plData["castShadows"];
+		if (castShadows) {
+			ShadowMapHandler shadowMapHandler(shadowVert.c_str(), shadowFrag.c_str(), shadowGeo.c_str());
+			shadowMapHandler.initialize(pl->position);
+			shadow_maps.push_back(&shadowMapHandler);
+		}
+
+		this->point_lights.push_back(pl);
+		this->editorInterface.add_point_light(pl);
+	}
+
+/*
 	PointLight* pl = new PointLight(glm::vec3(0.0f), true, 1.0f, glm::vec3(1.0f), 2.0f);
 
 	Model* model = new Model(glm::vec3(0.0f),
@@ -370,14 +434,14 @@ void Game::initialize_point_lights()
 
 	// pl->add_child(model);
 	ShadowMapHandler shadowMapHandler(
-		"resources/shaders/shadow_map_vertex.glsl", 
+		"resources/shaders/shadow_map_vertex.glsl",
 		"resources/shaders/shadow_map_fragment.glsl",
 		"resources/shaders/shadow_map_geometry.glsl");
 	shadowMapHandler.initialize(pl->position);
 	shadow_maps.push_back(&shadowMapHandler);
 
 	this->point_lights.push_back(pl);
-	this->editorInterface.add_point_light(pl);
+	this->editorInterface.add_point_light(pl);*/
 }
 
 void Game::initialize_lights() 

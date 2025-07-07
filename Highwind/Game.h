@@ -3,6 +3,9 @@
 #include "defines.h"
 #include "Camera.h"
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 // Enable for fun!
 // #define MODE_WIREFRAME
 
@@ -76,6 +79,11 @@ private:
 	double mouse_offset_y;
 	bool first_mouse;
 
+	bool out = false;
+
+	json frdata;
+	json leveldata;
+
 	Camera camera;
 	EditorInterface editorInterface;
 
@@ -95,6 +103,7 @@ private:
 	std::vector<Mesh*> meshes;
 	std::vector<glm::vec3*> lights;
 	std::vector<PointLight*> point_lights;
+	std::map<std::string, Model*> model_map;
 	std::vector<Model*> models;
 	std::vector<ShadowMapHandler*> shadow_maps;
 

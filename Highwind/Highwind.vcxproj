@@ -179,6 +179,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GlobalCache.h" />
     <ClInclude Include="GraphicsOptions.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="logger.hpp" />
     <ClInclude Include="Material.h" />
