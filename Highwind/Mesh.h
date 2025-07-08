@@ -9,13 +9,28 @@
 
 class Mesh {
 public:
+	Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) : Mesh(vertices.data(), vertices.size(), indices.data(), indices.size()) {
+		for (auto& tx : textures) {
+			int textureType = tx.get_ext();
+			if (textureType == 0) {
+				this->textureDiffuse = &tx;
+				this->hasDiffuse = true;
+			}
+			else if (textureType == 2) {
+				this->textureSpecular = &tx;
+				this->hasSpecular = true;
+			}
+			else
+				FWARN("Textures > WARNING: Unknown texture extension %s", textureType);
+		}
+	}
+
 	Mesh(
 		const Vertex* vertices, const unsigned nrOfVertices, const GLuint* indices, const unsigned nrOfIndices,
 
 		glm::vec3 postion = glm::vec3(0.0f),
 		glm::vec3 rotation = glm::vec3(0.0f),
 		glm::vec3 scale = glm::vec3(1.0f)) {
-
 		m_position = postion;
 		m_rotation = rotation;
 		m_scale = scale;
@@ -98,10 +113,16 @@ public:
 
 	void render(Shader* shader) {
 		// Update uniforms
+		
+		if (hasDiffuse)
+			textureDiffuse->bind(0);
+		if (hasSpecular)
+			textureSpecular->bind(1);
+
 		this->update_model_matrix();
 		this->update_uniforms(shader);
+		
 		shader->use();
-
 		// Bind VAO
 		glBindVertexArray(m_VAO);
 		// Render
@@ -157,6 +178,12 @@ private:
 	glm::vec3 m_scale;
 
 	glm::mat4 m_modelMatrix;
+
+	Texture* textureDiffuse;
+	Texture* textureSpecular;
+
+	bool hasDiffuse = false;
+	bool hasSpecular = false;
 
 	void init_vao() {
 		// create vao

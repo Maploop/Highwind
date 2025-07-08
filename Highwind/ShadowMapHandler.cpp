@@ -93,9 +93,9 @@ void ShadowMapHandler::pre_render() noexcept {
 	
 }
 
-void ShadowMapHandler::render(std::vector<Mesh*> meshList, Camera camera) {
-	for (Mesh* mesh : meshList) {
-		mesh->render(&this->shadowMapShader);
+void ShadowMapHandler::render(std::vector<Model*> modelList, Camera camera) {
+	for (Model* model : modelList) {
+		model->render(&this->shadowMapShader);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -15,7 +15,7 @@ public:
 	void initialize(glm::vec3 lightPosition);
 	
 	void pre_render() noexcept;
-	void render(std::vector<Mesh*> meshList, Camera camera);
+	void render(std::vector<Model*> modeList, Camera camera);
 
 private:
 	// Variables

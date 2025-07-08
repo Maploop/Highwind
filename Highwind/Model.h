@@ -92,7 +92,7 @@ public:
 
 	}
 
-	void render(Shader* shader) {
+	virtual void render(Shader* shader) {
 		this->update_uniforms();
 
 		this->material->send_to_shader(*shader);

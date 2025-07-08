@@ -11,9 +11,16 @@
 
 class Texture {
 public:
+	Texture() = default;
+
+	// I know this is very bad practice but please go bother someone else thanks
+	Texture(const char* path, int ex, std::string texTypeName) : Texture(path, GL_TEXTURE_2D) {
+		this->extension = ex;
+	}
+
 	Texture(const char* path, GLenum type) {
 		m_type = type;
-		FINFO("Textures > Loading \"%s\"", path);
+		
 		unsigned char* image = SOIL_load_image(path, &m_width, &m_height, NULL, SOIL_LOAD_RGBA);
 		glGenTextures(1, &m_id);
 		glBindTexture(type, m_id);
@@ -34,6 +41,7 @@ public:
 		glActiveTexture(0);
 		glBindTexture(type, 0);
 		SOIL_free_image_data(image);
+		FINFO("Textures > Loaded \"%s\" with ID %i", path, m_id);
 	}
 	~Texture() {
 		glDeleteTextures(1, &m_id);
@@ -50,11 +58,19 @@ public:
 		glActiveTexture(0);
 		glBindTexture(m_type, 0);
 	}
+
+	int get_ext() {
+		return this->extension;
+	}
 private:
 	GLuint m_id;
 	unsigned int m_type;
 	int m_width;
 	int m_height;
+
+	int extension = 0;
+	// 0 = Diffuse texture 
+	// 1 = Specular texture
 
 	void load_from_file(const char* path) {
 		if (m_id) {

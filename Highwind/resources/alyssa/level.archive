@@ -65,6 +65,10 @@
                 {
                     "path": "resources/textures/wooden_floor.png",
                     "type": "GL_TEXTURE_2D"
+                },
+                {
+                    "path": "resources/3d/statue/source/textured_output.jpg",
+                    "type": "GL_TEXTURE_2D"
                 }
             ],
             "materials": [
@@ -126,6 +130,16 @@
                     "objectPath": "resources/3d/sphere.obj",
                     "children": []
                 },
+                "statue": {
+                    "position": [0.0, 10.0, 0.0],
+                    "scale": [1.0, 1.0, 1.0],
+                    "rotation": [0.0, 0.0, 0.0],
+                    "materialIndex": 0,
+                    "overrideTextureDiffuse": 6,
+                    "overrideTextureSpecular": 6,
+                    "objectPath": "resources/3d/statue2/scene.gltf",
+                    "children": []
+                },
                 "quad":{
                     "position": [0.0, 0.0, 0.0],
                     "materialIndex": 0,
@@ -147,7 +161,7 @@
                     "position": [0.0, 0.0, 0.0],
                     "blinnPhong": true,
                     "intensity": 1.0,
-                    "color": [-4.6, 0.4, 0.2],
+                    "color": [1.0, 1.0, 1.0],
                     "constant": 2.0,
                     "linear": 0.045,
                     "quadratic": 0.0075,

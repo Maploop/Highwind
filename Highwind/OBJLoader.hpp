@@ -103,9 +103,17 @@ static std::vector<Vertex> load_from_obj(const char* file_name) {
 		else if (prefix == "use_mtl") {
 
 		}
+		else if (prefix == "usemtl") {
+
+		}
+		else if (prefix == "") {
+
+		}
 		else { }
 	}
 
+	// const char* x = stringify(positions).c_str();
+	// FDEBUG("%s", x);
 	vertices.resize(position_indices.size(), Vertex());
 	for (size_t i = 0; i < position_indices.size(); i++) {
 		vertices[i].position = positions[position_indices[i] - 1];
@@ -117,4 +125,14 @@ static std::vector<Vertex> load_from_obj(const char* file_name) {
 
 	cached_data.insert({file_name, vertices});
 	return vertices;
+}
+
+static std::string stringify(const std::vector<glm::vec3>& v) {
+	std::stringstream ss;
+	for (size_t i = 0; i < v.size(); i++) {
+		if (i != 0) ss << "->";
+		ss << v[i].x << ", " << v[i].y << ", " << v[i].z;
+	}
+
+	return ss.str();
 }

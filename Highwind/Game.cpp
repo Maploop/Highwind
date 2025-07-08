@@ -144,7 +144,7 @@ void Game::render()
 
 	for (ShadowMapHandler* smh : shadow_maps) {
 		smh->pre_render();
-		smh->render(this->meshes, this->camera);
+		smh->render(this->models, this->camera);
 	}
 
 	lighting_pass();
@@ -366,19 +366,32 @@ void Game::initialize_obj_models()
 			meshList.clear();
 		}
 		else {
-			Model* model = new Model(position,
-				this->materials[materialIndex],
-				this->textures[overrideTexDif],
-				this->textures[overrideTexSpec],
-				objectPath.c_str());
-			
-			if (data.contains("rotation"))
-				model->rotate(glm::vec3(data["rotation"][0], data["rotation"][1], data["rotation"][2]));
-			if (data.contains("scale"))
-				model->scale(glm::vec3(data["scale"][0], data["scale"][1], data["scale"][2]));
+			if (ends_with(objectPath, ".gltf")) {
+				GLTFModel* model = new GLTFModel(position, objectPath.c_str());
 
-			this->models.push_back(model);
-			this->model_map.insert(std::pair(id, model));
+				if (data.contains("rotation"))
+					model->rotate(glm::vec3(data["rotation"][0], data["rotation"][1], data["rotation"][2]));
+				if (data.contains("scale"))
+					model->scale(glm::vec3(data["scale"][0], data["scale"][1], data["scale"][2]));
+
+				this->models.push_back(model);
+				this->model_map.insert(std::pair(id, model));
+			}
+			else {
+				Model* model = new Model(position,
+					this->materials[materialIndex],
+					this->textures[overrideTexDif],
+					this->textures[overrideTexSpec],
+					objectPath.c_str());
+
+				if (data.contains("rotation"))
+					model->rotate(glm::vec3(data["rotation"][0], data["rotation"][1], data["rotation"][2]));
+				if (data.contains("scale"))
+					model->scale(glm::vec3(data["scale"][0], data["scale"][1], data["scale"][2]));
+
+				this->models.push_back(model);
+				this->model_map.insert(std::pair(id, model));
+			}
 		}
 	}
 
